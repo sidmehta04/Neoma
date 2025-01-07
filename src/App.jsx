@@ -8,7 +8,6 @@ import useDevToolsPrevention from './hook/useDevToolsPrevention';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/sections/Footer';
 import WhatsAppContact from './components/ui/Whatsapp';
-import ThemeToggle from './components/sections/ThemeToggle';
 
 // Error tracking function for production
 const trackError = (error, errorInfo) => {
