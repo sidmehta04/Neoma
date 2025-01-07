@@ -206,12 +206,10 @@ const routes = [
   { path: '*', element: <Navigate to="/" replace />, title: '404' }
 ];
 
-// Enhanced App component with route-based code splitting
-const App = () => {
+const AppContent = () => {
   useDevToolsPrevention();
-
-  // Update document title based on current route
   const location = useLocation();
+
   useEffect(() => {
     const currentRoute = routes.find(route => 
       route.path === location.pathname || 
@@ -251,11 +249,11 @@ const App = () => {
   );
 };
 
-// Wrap the app with Router
-const AppWrapper = () => (
+// Main App component now just provides Router context
+const App = () => (
   <Router>
-    <App />
+    <AppContent />
   </Router>
 );
 
-export default AppWrapper;
+export default App;
