@@ -3,8 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  // Remove base if you're not deploying to a subdirectory
-  // base: '/Neoma_Cap/',
+  // Base URL is not needed for Vercel deployment
   
   plugins: [react()],
   
