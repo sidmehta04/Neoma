@@ -9,7 +9,7 @@ import {
 } from "./CommonComponents";
 import { 
   Heart, Briefcase, Scale, Handshake,
-  Rocket, Lightbulb, Network, ChartBar
+  Rocket, Lightbulb, Network, BarChart
 } from "lucide-react";
 
 const AngelInvestment = () => {
@@ -81,7 +81,7 @@ const AngelInvestment = () => {
       description: "Early access to groundbreaking ideas and technologies"
     },
     {
-      icon: ChartBar,
+      icon: BarChart,
       title: "Portfolio Diversification",
       description: "Add unique asset class to spread risk across different sectors"
     }

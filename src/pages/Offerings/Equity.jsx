@@ -9,7 +9,7 @@ import {
 } from "./CommonComponents";
 import { 
   Diamond, Crown, Clock, Target, 
-  Star, ChartBar, Building, Lightbulb
+  Star, BarChart, Building, Lightbulb
 } from "lucide-react";
 
 const PrivateBoutique = () => {
@@ -71,7 +71,7 @@ const PrivateBoutique = () => {
       description: "Get in before the company goes public and potentially benefit from listing gains"
     },
     {
-      icon: ChartBar,
+      icon: BarChart,
       title: "High Growth Potential",
       description: "Opportunity for substantial returns through pre-IPO investments"
     },

@@ -9,7 +9,7 @@ import {
 } from "./CommonComponents";
 import { 
   Shield, Banknote, Scale, Target, 
-  Calculator, ChartBar, Landmark
+  Calculator, BarChart, Landmark
 } from "lucide-react";
 
 const Bonds = () => {
@@ -76,7 +76,7 @@ const Bonds = () => {
       description: "Lower volatility helping preserve invested capital"
     },
     {
-      icon: ChartBar,
+      icon: BarChart,
       title: "Diversification",
       description: "Reduce overall portfolio risk and enhance stability"
     },

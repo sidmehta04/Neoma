@@ -9,7 +9,7 @@ import {
 } from "./CommonComponents";
 import { 
   Users, Clock, LineChart, Target, 
-  Shield, ChartBar, Wallet, Coins
+  Shield, BarChart, Wallet, Coins
 } from "lucide-react";
 
 const MutualFunds = () => {
@@ -71,7 +71,7 @@ const MutualFunds = () => {
       description: "Expert fund managers handling your investments"
     },
     {
-      icon: ChartBar,
+      icon: BarChart,
       title: "Diversification",
       description: "Spread risk across multiple securities and sectors"
     },

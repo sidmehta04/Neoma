@@ -7,10 +7,7 @@ import {
   InfoCard, 
   InvestmentAnimation 
 } from "./CommonComponents";
-import { 
-  Users, Clock, LineChart, Lightbulb, 
-  Rocket, TrendingUp, ChartBar, Building
-} from "lucide-react";
+import { Users, Clock, LineChart, Lightbulb, Rocket, TrendingUp, BarChart, Building } from "lucide-react";
 
 const GetStarted = () => {
   const facts = [
@@ -72,7 +69,7 @@ const GetStarted = () => {
       description: "Greater capital appreciation compared to listed shares"
     },
     {
-      icon: ChartBar,
+      icon: BarChart,
       title: "Portfolio Diversification",
       description: "Reduce risk through exposure to different sectors"
     },
