@@ -143,7 +143,7 @@ const ContactForm = () => {
                       isDark ? "dark:text-gray-400" : ""
                     }`}
                   >
-                    2/30 Nehru Enclave KalKaji D Block, New Delhi -110019
+                    2/16 FF RS Nehru Enclave KalKaji D Block, New Delhi -110019
                   </p>
                 </div>
               </div>
