@@ -3,11 +3,24 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  base: './',  // Add this at the top level
-
+  base: './',
   plugins: [react()],
   build: {
-    outDir: 'dist',
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': [
+            'react',
+            'react-dom',
+            'react-router-dom',
+            'lucide-react'
+          ],
+          'recharts': ['recharts'],
+          // Remove the problematic ui-components chunk
+        }
+      }
+    },
     sourcemap: true,
     minify: 'terser',
     terserOptions: {
@@ -15,38 +28,18 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true
       }
-    },
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('recharts')) {
-              return 'vendor-recharts';
-            }
-            return 'vendor';
-          }
-        },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]'
-      }
     }
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      
-    },
-    extensions: ['.js', '.jsx', '.ts', '.tsx']
-
-  },
-  server: {
-    port: 3000
+      '@': path.resolve(__dirname, './src')
+    }
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom']
+  },
+  server: {
+    port: 3000,
+    open: true
   }
 });

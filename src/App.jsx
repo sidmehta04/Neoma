@@ -1,6 +1,6 @@
 // App.jsx
 import React, { Suspense, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import useDevToolsPrevention from './hook/useDevToolsPrevention';
 
@@ -8,6 +8,7 @@ import useDevToolsPrevention from './hook/useDevToolsPrevention';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/sections/Footer';
 import WhatsAppContact from './components/ui/Whatsapp';
+
 
 // Error tracking function for production
 const trackError = (error, errorInfo) => {
