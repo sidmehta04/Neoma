@@ -48,23 +48,27 @@ const HeroSection = () => {
 
   return (
     <div className="w-full min-h-[calc(100vh-72px)] relative overflow-hidden">
-      {/* Video Background */}
+      {/* Responsive Video Background */}
       <div className="absolute inset-0 w-full h-full">
-        <video
-          className={`w-full h-full object-cover transition-opacity duration-1000 ${
-            isVideoLoaded ? "opacity-70" : "opacity-0"
-          }`}
-          autoPlay
-          muted
-          loop
-          playsInline
-          onLoadedData={handleVideoLoad}
-        >
-          <source src={moonvideo} type="video/mp4" />
-        </video>
-        <div className={`absolute inset-0 bg-black transition-opacity duration-1000 ${
-          isVideoLoaded ? "bg-opacity-50" : "bg-opacity-80"
-        }`}></div>
+        <div className="relative w-full h-full">
+          <video
+            className={`absolute top-1/2 left-1/2 min-w-full min-h-full object-cover transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-1000 ${
+              isVideoLoaded ? "opacity-70" : "opacity-0"
+            }`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onLoadedData={handleVideoLoad}
+          >
+            <source src={moonvideo} type="video/mp4" />
+          </video>
+          <div 
+            className={`absolute inset-0 bg-black transition-opacity duration-1000 ${
+              isVideoLoaded ? "bg-opacity-50" : "bg-opacity-80"
+            }`}
+          ></div>
+        </div>
       </div>
 
       {/* Content Container */}
@@ -83,7 +87,7 @@ const HeroSection = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 
+          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl 
                       font-bold mb-4 sm:mb-6 text-white 
                       whitespace-pre-line text-left tracking-tight
                       leading-tight sm:leading-tight md:leading-tight">
@@ -96,7 +100,7 @@ const HeroSection = () => {
           </h1>
 
           {/* Description */}
-          <p className="text-base sm:text-lg md:text-xl 
+          <p className="text-sm sm:text-base md:text-lg
                      mb-6 sm:mb-8 md:mb-12 text-left 
                      max-w-2xl animate-shimmer 
                      bg-gradient-to-r from-white via-gray-100 to-white 
