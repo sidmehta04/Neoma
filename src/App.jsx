@@ -234,7 +234,7 @@ const MetaManager = () => {
           "@context": "https://schema.org",
           "@type": "Organization",
           "name": "Neoma Capital",
-          "url": "https://neomacapital.com",
+          "url": "https://www.neomacapital.com/",
           "description": "Your trusted partner for comprehensive investment solutions",
           "address": {
             "@type": "PostalAddress",
