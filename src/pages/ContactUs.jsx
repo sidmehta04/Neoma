@@ -164,13 +164,14 @@ const ContactForm = () => {
               <div className="flex items-center space-x-4">
                 <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0" />
                 <div>
-                  <p
+                  <a
+                    href="mailto:info@neomacapital.com"
                     className={`text-sm sm:text-base text-gray-600 ${
                       isDark ? "dark:text-gray-400" : ""
                     }`}
                   >
                     info@neomacapital.com
-                  </p>
+                  </a>
                 </div>
               </div>
             </div>
