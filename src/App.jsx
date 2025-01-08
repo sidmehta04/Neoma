@@ -3,6 +3,8 @@ import React, { Suspense, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import useDevToolsPrevention from './hook/useDevToolsPrevention';
+// Change this import
+import { SpeedInsights } from "@vercel/speed-insights/react" // note: changed from /next to /react
 
 // Core components that are always needed
 import Navbar from './components/layout/Navbar';
@@ -244,6 +246,8 @@ const AppContent = () => {
             </Routes>
           </Suspense>
         </ErrorBoundary>
+        <SpeedInsights /> {/* Add this line */}
+
       </div>
     </ThemeProvider>
   );
