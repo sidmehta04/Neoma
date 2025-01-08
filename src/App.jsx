@@ -3,11 +3,10 @@ import React, { Suspense, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import useDevToolsPrevention from './hook/useDevToolsPrevention';
-// Change this import
-import { SpeedInsights } from "@vercel/speed-insights/react" // note: changed from /next to /react
-import { Analytics } from "@vercel/analytics/react" // Add this import at the top
-
-// Core components that are always needed
+import { SpeedInsights } from "@vercel/speed-insights/react"
+import { Analytics } from "@vercel/analytics/react"
+import { Helmet } from 'react-helmet';
+// Core components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/sections/Footer';
 import WhatsAppContact from './components/ui/Whatsapp';
@@ -16,7 +15,6 @@ import WhatsAppContact from './components/ui/Whatsapp';
 // Error tracking function for production
 const trackError = (error, errorInfo) => {
   if (process.env.NODE_ENV === 'production') {
-    // Implement your error tracking service here
     console.error('Production Error:', error, errorInfo);
   }
 };
@@ -189,47 +187,170 @@ const HomePage = () => (
     </Suspense>
   </Layout>
 );
-
-// Route configurations with metadata
-const routes = [
-  { path: '/', element: <HomePage />, title: 'Home' },
-  { path: '/contact', element: <ContactPage />, title: 'Contact Us' },
-  { path: '/FAQ', element: <FAQ />, title: 'FAQ' },
-  { path: '/shares/:shareName', element: <ShareDetail />, title: 'Share Details' },
-  { path: '/get-started', element: <GetStarted />, title: 'Get Started' },
-  { path: '/mutual-funds', element: <MutualFunds />, title: 'Mutual Funds' },
-  { path: '/alternative', element: <AlternativeInvestmentFunds />, title: 'Alternative Investments' },
-  { path: '/equity', element: <Equity />, title: 'Equity' },
-  { path: '/pre-ipo', element: <PreIPO />, title: 'Pre-IPO' },
-  { path: '/portfolio', element: <Portfolio_suggestions />, title: 'Portfolio Suggestions' },
-  { path: '/debt', element: <Debt />, title: 'Debt' },
-  { path: '/blog', element: <BlogPage />, title: 'Blog' },
-  { path: '/blog/:slug', element: <BlogPost />, title: 'Blog Post' },
-  { path: '/calculators', element: <CalculatorLayout />, title: 'Calculators' },
-  { path: '*', element: <Navigate to="/" replace />, title: '404' }
-];
-
-const AppContent = () => {
-  useDevToolsPrevention();
+const MetaManager = () => {
   const location = useLocation();
-
+  
   useEffect(() => {
     const currentRoute = routes.find(route => 
       route.path === location.pathname || 
       (route.path.includes(':') && location.pathname.startsWith(route.path.split(':')[0]))
     );
+    
     if (currentRoute) {
-      document.title = `${currentRoute.title} | Your Site Name`;
+      document.title = `${currentRoute.title} | Neoma Capital`;
     }
   }, [location]);
+
+  const currentRoute = routes.find(route => 
+    route.path === location.pathname || 
+    (route.path.includes(':') && location.pathname.startsWith(route.path.split(':')[0]))
+  ) || routes[0]; // Fallback to home route if not found
+
+  return (
+    <Helmet>
+      <title>{`${currentRoute.title} | Neoma Capital`}</title>
+      <meta name="description" content={currentRoute.description} />
+      
+      {/* Open Graph Meta Tags */}
+      <meta property="og:title" content={`${currentRoute.title} | Neoma Capital`} />
+      <meta property="og:description" content={currentRoute.description} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={`https://neomacapital.com${location.pathname}`} />
+      
+      {/* Twitter Card Meta Tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={`${currentRoute.title} | Neoma Capital`} />
+      <meta name="twitter:description" content={currentRoute.description} />
+      
+      {/* Additional SEO Meta Tags */}
+      <meta name="robots" content="index, follow" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="keywords" content="Neoma Capital, investments, mutual funds, equity, pre-IPO, portfolio management, financial services" />
+      <link rel="canonical" href={`https://neomacapital.com${location.pathname}`} />
+      
+      {/* Schema.org JSON-LD */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Neoma Capital",
+          "url": "https://neomacapital.com",
+          "description": "Your trusted partner for comprehensive investment solutions",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IN"
+          }
+        })}
+      </script>
+    </Helmet>
+  );
+};
+// Enhanced route configurations with metadata
+const routes = [
+  { 
+    path: '/', 
+    element: <HomePage />, 
+    title: 'Neoma Capital',
+    description: 'Your trusted partner for comprehensive investment solutions. Explore our range of financial services including mutual funds, equity, and more.'
+  },
+  { 
+    path: '/contact', 
+    element: <ContactPage />, 
+    title: 'Contact Us',
+    description: 'Get in touch with our investment experts. We are here to answer your questions and help you achieve your financial goals.'
+  },
+  { 
+    path: '/FAQ', 
+    element: <FAQ />, 
+    title: 'FAQ',
+    description: 'Find answers to commonly asked questions about our investment services, processes, and financial solutions.'
+  },
+  { 
+    path: '/shares/:shareName', 
+    element: <ShareDetail />, 
+    title: 'Share Details',
+    description: 'Detailed analysis and information about investment opportunities in our carefully selected shares.'
+  },
+  { 
+    path: '/get-started', 
+    element: <GetStarted />, 
+    title: 'Get Started',
+    description: 'Begin your investment journey with us. Learn about our onboarding process and investment options.'
+  },
+  { 
+    path: '/mutual-funds', 
+    element: <MutualFunds />, 
+    title: 'Mutual Funds',
+    description: 'Explore our selection of mutual funds. Discover professionally managed investment options for diverse portfolio needs.'
+  },
+  { 
+    path: '/alternative', 
+    element: <AlternativeInvestmentFunds />, 
+    title: 'Alternative Investments',
+    description: 'Discover alternative investment opportunities beyond traditional assets. Explore innovative ways to diversify your portfolio.'
+  },
+  { 
+    path: '/equity', 
+    element: <Equity />, 
+    title: 'Equity',
+    description: 'Invest in equity markets with our expert guidance. Explore stock market opportunities and equity investment strategies.'
+  },
+  { 
+    path: '/pre-ipo', 
+    element: <PreIPO />, 
+    title: 'Pre-IPO',
+    description: 'Access exclusive pre-IPO investment opportunities. Invest in promising companies before they go public.'
+  },
+  { 
+    path: '/portfolio', 
+    element: <Portfolio_suggestions />, 
+    title: 'Portfolio Suggestions',
+    description: 'Get personalized portfolio recommendations based on your investment goals and risk tolerance.'
+  },
+  { 
+    path: '/debt', 
+    element: <Debt />, 
+    title: 'Debt',
+    description: 'Explore debt investment options for stable returns. Discover fixed-income securities and debt market opportunities.'
+  },
+  { 
+    path: '/blog', 
+    element: <BlogPage />, 
+    title: 'Blog',
+    description: 'Stay informed with our latest insights on investment strategies, market analysis, and financial planning tips.'
+  },
+  { 
+    path: '/blog/:slug', 
+    element: <BlogPost />, 
+    title: 'Blog Post',
+    description: 'Read detailed articles about investment strategies, market insights, and financial planning advice.'
+  },
+  { 
+    path: '/calculators', 
+    element: <CalculatorLayout />, 
+    title: 'Calculators',
+    description: 'Use our financial calculators to plan your investments, estimate returns, and make informed financial decisions.'
+  },
+  { 
+    path: '*', 
+    element: <Navigate to="/" replace />, 
+    title: '404',
+    description: 'Page not found. Return to our homepage to explore our investment services.'
+  }
+];
+
+
+const AppContent = () => {
+  useDevToolsPrevention();
 
   return (
     <ThemeProvider>
       <div className="flex flex-col min-h-screen">
+        <MetaManager />
         <ErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
-              {routes.map(({ path, element, title }) => (
+              {routes.map(({ path, element }) => (
                 <Route
                   key={path}
                   path={path}
@@ -248,12 +369,12 @@ const AppContent = () => {
           </Suspense>
         </ErrorBoundary>
         <SpeedInsights />
-        <Analytics/>
-
+        <Analytics />
       </div>
     </ThemeProvider>
   );
 };
+
 
 // Main App component now just provides Router context
 const App = () => (
