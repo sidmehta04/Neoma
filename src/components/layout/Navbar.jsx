@@ -12,6 +12,8 @@ import {
   HelpCircle,
   FileText,
 } from "lucide-react";
+import neomalogo from "../../assets/neomalogo.svg";
+
 import { useTheme } from "../../context/ThemeContext";
 import ThemeToggle from "../sections/ThemeToggle";
 
@@ -377,7 +379,7 @@ const Navbar = () => {
       onClick={() => setActiveDropdown(null)}
     >
       <img
-        src="src/assets/neomalogo.svg"
+        src={neomalogo}
         alt="Neoma Capital"
         className="block h-36 w-64 object-contain md:scale-95 scale-75 dark:brightness-200"
       />
