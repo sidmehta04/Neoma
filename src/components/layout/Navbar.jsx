@@ -13,7 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import ThemeToggle from '../sections/ThemeToggle';
+import ThemeToggle from "../sections/ThemeToggle";
 
 const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -258,7 +258,9 @@ const Navbar = () => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <span className={`text-lg font-semibold ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}>
+          <span
+            className={`text-lg font-semibold ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
+          >
             Menu
           </span>
           <button
@@ -275,8 +277,10 @@ const Navbar = () => {
             { title: "Resources", items: resources },
           ].map(({ title, items }) => (
             <div key={title} className="space-y-1">
-              <div className={`px-2 text-sm font-medium uppercase tracking-wider
-                ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+              <div
+                className={`px-2 text-sm font-medium uppercase tracking-wider
+                ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+              >
                 {title}
               </div>
               <div className="space-y-1">
@@ -289,15 +293,21 @@ const Navbar = () => {
                       ${theme === "dark" ? "hover:bg-gray-800" : "hover:bg-gray-100"}`}
                   >
                     <div className="flex items-start space-x-3">
-                      <div className={`mt-1 p-1.5 rounded-lg
-                        ${theme === "dark" ? "bg-gray-700 text-blue-400" : "bg-blue-100 text-blue-600"}`}>
+                      <div
+                        className={`mt-1 p-1.5 rounded-lg
+                        ${theme === "dark" ? "bg-gray-700 text-blue-400" : "bg-blue-100 text-blue-600"}`}
+                      >
                         <item.icon className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className={`font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-900"}`}>
+                        <div
+                          className={`font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-900"}`}
+                        >
                           {item.name}
                         </div>
-                        <div className={`text-sm mt-0.5 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+                        <div
+                          className={`text-sm mt-0.5 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                        >
                           {item.desc}
                         </div>
                       </div>
@@ -309,8 +319,10 @@ const Navbar = () => {
           ))}
 
           <div className="space-y-1">
-            <div className={`px-2 text-sm font-medium uppercase tracking-wider
-              ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+            <div
+              className={`px-2 text-sm font-medium uppercase tracking-wider
+              ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+            >
               Actions
             </div>
             <div className="space-y-1">
@@ -321,20 +333,26 @@ const Navbar = () => {
                   transition-colors duration-150
                   ${theme === "dark" ? "text-gray-200 hover:bg-gray-800" : "text-gray-900 hover:bg-gray-100"}`}
               >
-                <div className={`p-1.5 rounded-lg
-                  ${theme === "dark" ? "bg-gray-700 text-blue-400" : "bg-blue-100 text-blue-600"}`}>
+                <div
+                  className={`p-1.5 rounded-lg
+                  ${theme === "dark" ? "bg-gray-700 text-blue-400" : "bg-blue-100 text-blue-600"}`}
+                >
                   <Settings className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-medium">Contact Us</div>
-                  <div className={`text-sm mt-0.5 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+                  <div
+                    className={`text-sm mt-0.5 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                  >
                     Get in touch with our team
                   </div>
                 </div>
               </Link>
-              
-              <div className={`flex items-center space-x-3 px-3 py-3 rounded-lg
-                transition-colors duration-150`}>
+
+              <div
+                className={`flex items-center space-x-3 px-3 py-3 rounded-lg
+                transition-colors duration-150`}
+              >
                 <ThemeToggle isMobileMenu={true} />
               </div>
             </div>
@@ -346,27 +364,25 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`sticky top-0 w-full px-8 py-4 flex justify-between 
-      items-center shadow-lg z-50 transition-colors duration-300
-      ${theme === "dark"
-        ? "bg-[#0B0F17] border-b border-gray-800"
-        : "bg-white border-b border-gray-100"
-      }`}
+    className={`sticky top-0 w-full px-8 py-3 flex justify-between 
+    items-center z-50 transition-colors duration-300 border-b
+    ${theme === "dark"
+      ? "bg-[#0B0F17] border-gray-800"
+      : "bg-white border-gray-100"
+    }`}
+  >
+    <Link
+      to="/"
+      className="flex items-center hover:opacity-80 transition-opacity h-12 overflow-hidden md:ml-0 -ml-24"
+      onClick={() => setActiveDropdown(null)}
     >
-      <Link
-        to="/"
-        className="flex items-center space-x-3 hover:opacity-90 transition-opacity"
-        onClick={() => setActiveDropdown(null)}
-      >
-        <div className="w-10 h-10 bg-blue-500 rounded-lg"></div>
-        <span
-          className={`text-lg sm:text-xl md:text-2xl font-bold ${
-            theme === "dark" ? "text-white" : "text-gray-900"
-          }`}
-        >
-          NeomaCapital
-        </span>
-      </Link>
+      <img
+        src="src/assets/neomalogo.svg"
+        alt="Neoma Capital"
+        className="block h-36 w-64 object-contain md:scale-95 scale-75 dark:brightness-200"
+      />
+    </Link>
+
 
       <div className="hidden md:flex flex-1 justify-center items-center mr-20">
         <div className="flex items-center space-x-24">
@@ -376,9 +392,10 @@ const Navbar = () => {
             to="/contact"
             className={`text-xl font-medium py-2 px-4 rounded-lg 
               transition-all duration-200
-              ${theme === "dark"
-                ? "text-gray-300 hover:text-white hover:bg-gray-800"
-                : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+              ${
+                theme === "dark"
+                  ? "text-gray-300 hover:text-white hover:bg-gray-800"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               }`}
           >
             Contact Us
