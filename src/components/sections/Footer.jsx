@@ -250,7 +250,7 @@ const Footer = () => {
           <div className="flex justify-center items-center">
             <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8 text-sm sm:text-base">
               <Link
-                to="/privacy-policy"
+                to={RiskDeclaration}
                 className={`transition-colors duration-200 text-center ${
                   theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
                 }`}
@@ -259,7 +259,7 @@ const Footer = () => {
               </Link>
               <span className="hidden sm:inline text-gray-400">|</span>
               <Link
-                to="/terms-of-use"
+                to={RiskDeclaration}
                 className={`transition-colors duration-200 text-center ${
                   theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
                 }`}
@@ -268,7 +268,7 @@ const Footer = () => {
               </Link>
               <span className="hidden sm:inline text-gray-400">|</span>
               <Link
-                to="/declaration-of-risk"
+                to={RiskDeclaration}
                 className={`transition-colors duration-200 text-center ${
                   theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
                 }`}
