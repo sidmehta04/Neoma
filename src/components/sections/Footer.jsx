@@ -215,7 +215,7 @@ const Footer = () => {
               <p className="mb-4">2/16 FF RS Nehru Enclave New Delhi -110019</p>
               <p className="mb-2">
                 <a
-                  href="mailto:admin@precize.in"
+                  href="mailto:info@neomacapital.com"
                   className={`transition-colors duration-200 ${
                     theme === "dark"
                       ? "hover:text-white"
