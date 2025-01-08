@@ -82,6 +82,45 @@ const Footer = () => {
                   Unlisted Shares
                 </Link>
               </li>
+              <li>
+                <Link 
+                  to="/alternative" 
+                  className={`transition-colors duration-200 ${
+                    theme === 'dark' ? 'hover:text-white' : 'hover:text-gray-900'
+                  }`}
+                >
+                  Alternative Investments
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/debt" 
+                  className={`transition-colors duration-200 ${
+                    theme === 'dark' ? 'hover:text-white' : 'hover:text-gray-900'
+                  }`}
+                >
+                  Bonds
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/pre-ipo" 
+                  className={`transition-colors duration-200 ${
+                    theme === 'dark' ? 'hover:text-white' : 'hover:text-gray-900'
+                  }`}
+                >
+                  Angle Investments
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/equity" 
+                  className={`transition-colors duration-200 ${
+                    theme === 'dark' ? 'hover:text-white' : 'hover:text-gray-900'
+                  }`}
+                >
+PrivateBoutique                </Link>
+              </li>
             </ul>
           </div>
 
