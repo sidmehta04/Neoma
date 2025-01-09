@@ -5,8 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import useDevToolsPrevention from './hook/useDevToolsPrevention';
 import { Analytics } from "@vercel/analytics/react";
 import { Helmet } from 'react-helmet';
-
-// Core components
+import { SpeedInsights } from "@vercel/speed-insights/react"// Core components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/sections/Footer';
 import WhatsAppContact from './components/ui/Whatsapp';
@@ -396,6 +395,7 @@ const AppContent = () => {
             </Routes>
           </Suspense>
         </ErrorBoundary>
+        <SpeedInsights/>
         <Analytics />
       </div>
     </ThemeProvider>
