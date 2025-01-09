@@ -24,9 +24,8 @@ app.use(cors({
       'http://localhost:5173',
       'https://neoma-tsta.vercel.app',
       'https://neoma-two.vercel.app',
-      'https://neomacapital.com',
-      'https://api.neomacapital.com'
-    ];
+      'https://www.neomacapital.com',
+      'https://api.neomacapital.com',    ];
     
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
@@ -93,7 +92,7 @@ app.get('/api/health', (req, res) => {
         'http://localhost:5173',
         'https://neoma-tsta.vercel.app',
         'https://neoma-two.vercel.app',
-        'https://neomacapital.com',
+        'https://www.neomacapital.com',
       'https://api.neomacapital.com'
       ]
     }
