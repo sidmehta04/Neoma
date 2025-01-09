@@ -92,7 +92,9 @@ app.get('/api/health', (req, res) => {
         'http://localhost:3000',
         'http://localhost:5173',
         'https://neoma-tsta.vercel.app',
-        'https://neoma-two.vercel.app'
+        'https://neoma-two.vercel.app',
+        'https://neomacapital.com',
+      'https://api.neomacapital.com'
       ]
     }
   };
