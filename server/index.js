@@ -1,103 +1,79 @@
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-const compression = require('compression');
 const dotenv = require('dotenv');
 const { createClient } = require('@supabase/supabase-js');
 
-// Load environment variables
 dotenv.config();
 
-// Initialize express app
 const app = express();
 const port = process.env.PORT || 5001;
-
-// Security Configurations
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
-});
-
-// Middleware Setup
-app.use(helmet()); // Security headers
-app.use(compression()); // Compress responses
-app.use(morgan('combined')); // Logging
-app.use(limiter); // Rate limiting
-app.use(express.json({ limit: '10mb' })); // Body parser with size limit
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Environment check logging
 console.log('Environment check:', {
   port: port,
-  supabaseUrl: process.env.SUPABASE_URL ? '✓ Set' : '✗ Missing',
-  hasServiceKey: process.env.SUPABASE_SERVICE_KEY ? '✓ Set' : '✗ Missing',
-  nodeEnv: process.env.NODE_ENV || 'development'
+  supabaseUrl: process.env.SUPABASE_URL,
+  hasServiceKey: !!process.env.SUPABASE_SERVICE_KEY,
+  nodeEnv: process.env.NODE_ENV
 });
 
-// CORS Configuration
-const corsOptions = {
+// CORS configuration
+app.use(cors({
   origin: function(origin, callback) {
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:5173',
+      'https://neoma-tsta.vercel.app',
+      'https://neoma-two.vercel.app',
       'https://neomacapital.com',
-      'https://www.neomacapital.com',
       'https://api.neomacapital.com'
     ];
     
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
       console.log('Blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true,
-  maxAge: 86400
-};
+  maxAge: 86400 // CORS preflight cache for 24 hours
+}));
 
-app.use(cors(corsOptions));
-
-// Additional security headers
+// Add headers for better error handling
 app.use((req, res, next) => {
-  res.header('X-Content-Type-Options', 'nosniff');
-  res.header('X-Frame-Options', 'DENY');
-  res.header('X-XSS-Protection', '1; mode=block');
-  res.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.header('Content-Type', 'application/json');
   next();
 });
 
-// Initialize Supabase with retry mechanism
-let supabase;
-const initSupabase = async (retries = 3) => {
-  try {
-    supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY,
-      {
-        auth: { autoRefreshToken: true, persistSession: true }
-      }
-    );
-    console.log('Supabase client initialized successfully');
-    return supabase;
-  } catch (error) {
-    if (retries > 0) {
-      console.log(`Retrying Supabase initialization. Attempts left: ${retries - 1}`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return initSupabase(retries - 1);
-    }
-    console.error('Failed to initialize Supabase client:', error);
-    throw error;
-  }
-};
+app.use(express.json());
 
-// API Routes
-// Health Check
+// Initialize Supabase client
+let supabase;
+try {
+  supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+  );
+} catch (error) {
+  console.error('Error initializing Supabase client:', error);
+}
+
+// Root endpoint with deployment info
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Backend API is running',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+    deployment: process.env.VERCEL_URL ? 'Vercel' : 'Local',
+    version: '1.0.0'
+  });
+});
+
+// Health check endpoint with detailed status
 app.get('/api/health', (req, res) => {
   const status = {
     service: 'ok',
@@ -110,104 +86,88 @@ app.get('/api/health', (req, res) => {
       url: process.env.VERCEL_URL || `http://localhost:${port}`,
       region: process.env.VERCEL_REGION || 'local'
     },
-    memory: process.memoryUsage(),
     cors: {
       enabled: true,
-      allowedOrigins: corsOptions.origin
+      allowedOrigins: [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://neoma-tsta.vercel.app',
+        'https://neoma-two.vercel.app',
+        'https://neomacapital.com',
+      'https://api.neomacapital.com'
+      ]
     }
   };
+  
   res.json(status);
 });
 
-// Import route modules
+// System info endpoint
+app.get('/api/system', (req, res) => {
+  res.json({
+    nodeVersion: process.version,
+    platform: process.platform,
+    memory: process.memoryUsage(),
+    cpu: process.cpuUsage(),
+    pid: process.pid,
+    uptime: process.uptime()
+  });
+});
+
+// Import routes
 const blogRoutes = require('./routes/blogs')(supabase);
 const financialsRoutes = require('./routes/financials')(supabase);
 
-// Request logging middleware
+// Add logging middleware for routes
 app.use((req, res, next) => {
-  const start = Date.now();
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    console.log(`${req.method} ${req.url} ${res.statusCode} ${duration}ms`);
-  });
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
 
-// Mount routes with error handling
-app.use('/api/blog-posts', async (req, res, next) => {
-  try {
-    if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
-    }
-    console.log(`Blog route accessed: ${req.method} ${req.path}`);
-    await blogRoutes(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-});
+// Mount routes
+app.use('/api/blog-posts', (req, res, next) => {
+  console.log('Blog route hit:', req.path);
+  next();
+}, blogRoutes);
 
-app.use('/api/financial-documents', async (req, res, next) => {
-  try {
-    if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
-    }
-    console.log(`Financials route accessed: ${req.method} ${req.path}`);
-    await financialsRoutes(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-});
+app.use('/api/financial-documents', (req, res, next) => {
+  console.log('Financials route hit:', req.path);
+  next();
+}, financialsRoutes);
 
-// API Documentation route
-app.get('/api/docs', (req, res) => {
-  const apiDocs = {
-    version: '1.0.0',
-    endpoints: {
-      health: {
-        path: '/api/health',
-        method: 'GET',
-        description: 'Service health check'
-      },
-      blogs: {
-        path: '/api/blog-posts',
-        methods: ['GET', 'POST'],
-        description: 'Blog posts management'
-      },
-      financials: {
-        path: '/api/financial-documents',
-        methods: ['GET', 'POST'],
-        description: 'Financial documents management'
-      }
-    }
+// API status endpoint
+app.get('/api/status', (req, res) => {
+  const routes = {
+    health: '/api/health',
+    system: '/api/system',
+    blogs: '/api/blog-posts',
+    financials: '/api/financial-documents'
   };
-  res.json(apiDocs);
-});
-
-// Error Handling Middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', {
-    message: err.message,
-    stack: err.stack,
-    path: req.path,
-    method: req.method,
-    timestamp: new Date().toISOString()
-  });
-
-  // Send appropriate error response
-  const status = err.status || 500;
-  res.status(status).json({
-    error: {
-      message: process.env.NODE_ENV === 'production' 
-        ? 'An error occurred' 
-        : err.message,
-      status: status,
-      path: req.path,
-      timestamp: new Date().toISOString()
+  
+  res.json({
+    status: 'operational',
+    timestamp: new Date().toISOString(),
+    availableRoutes: routes,
+    environment: process.env.NODE_ENV,
+    deployment: {
+      url: process.env.VERCEL_URL || `http://localhost:${port}`,
+      type: process.env.VERCEL_URL ? 'production' : 'development'
     }
   });
 });
 
-// 404 Handler
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    details: err.message,
+    timestamp: new Date().toISOString(),
+    path: req.path
+  });
+});
+
+// Catch-all for undefined routes
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Not Found',
@@ -217,44 +177,28 @@ app.use('*', (req, res) => {
   });
 });
 
-// Server Startup
-const startServer = async () => {
-  try {
-    await initSupabase();
-    
-    app.listen(port, () => {
-      console.log(`
+// Start server
+app.listen(port, () => {
+  console.log(`
 ╔════════════════════════════════════════╗
-║         Neoma Capital API Server       ║
+║         Backend Server Started          ║
 ╠════════════════════════════════════════╣
 ║                                        ║
-║  Production: api.neomacapital.com      ║
-║  Environment: ${process.env.NODE_ENV || 'development'}                ║
-║  Supabase: Connected                   ║
-║  Port: ${port}                         ║
+║  Health: http://localhost:${port}/api/health   ║
+║  Status: http://localhost:${port}/api/status   ║
 ║                                        ║
-║  Health: /api/health                   ║
-║  Docs: /api/docs                       ║
+║  Environment: ${process.env.NODE_ENV || 'development'}                ║
+║  Supabase: ${!!supabase ? 'Connected' : 'Not Connected'}                    ║
 ║                                        ║
 ╚════════════════════════════════════════╝
-      `);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
+  `);
+});
 
-// Global error handlers
+// Global error handling
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-  // Graceful shutdown
-  process.exit(1);
 });
-
-// Start the server
-startServer();
