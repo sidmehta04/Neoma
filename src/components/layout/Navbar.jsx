@@ -12,10 +12,11 @@ import {
   HelpCircle,
   FileText,
 } from "lucide-react";
-import neomalogo from "../../assets/neomalogo.svg";
 
 import { useTheme } from "../../context/ThemeContext";
 import ThemeToggle from "../sections/ThemeToggle";
+import neomalogo from "../../assets/neomalogo2.svg"; 
+
 
 const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -23,6 +24,7 @@ const Navbar = () => {
   const dropdownRefs = useRef({});
   const navigate = useNavigate();
   const { theme } = useTheme();
+
 
   const offerings = [
     {
@@ -364,26 +366,31 @@ const Navbar = () => {
     </div>
   );
 
+
   return (
     <nav
-    className={`sticky top-0 w-full px-8 py-3 flex justify-between 
-    items-center z-50 transition-colors duration-300 border-b
-    ${theme === "dark"
-      ? "bg-[#0B0F17] border-gray-800"
-      : "bg-white border-gray-100"
-    }`}
-  >
-    <Link
-      to="/"
-      className="flex items-center hover:opacity-80 transition-opacity h-12 overflow-hidden md:ml-0 -ml-24"
-      onClick={() => setActiveDropdown(null)}
+      className={`sticky top-0 w-full px-8 py-3 flex justify-between 
+      items-center z-50 transition-colors duration-300 border-b
+      ${
+        theme === "dark"
+          ? "bg-[#0B0F17] border-gray-800"
+          : "bg-white border-gray-100"
+      }`}
     >
-      <img
-        src={neomalogo}
-        alt="Neoma Capital"
-        className="block h-36 w-64 object-contain md:scale-95 scale-75 dark:brightness-200"
-      />
-    </Link>
+      <Link
+        to="/"
+        className="flex items-center hover:opacity-80 transition-opacity h-12 overflow-hidden md:ml-0 -ml-24"
+        onClick={() => setActiveDropdown(null)}
+      >
+        <img
+          src={neomalogo}
+          alt="Neoma Capital"
+          className="block h-36 w-64 object-contain md:scale-95 scale-75"
+          style={{
+            filter: theme === 'dark' ? 'invert(1)' : 'none'
+          }}
+        />
+      </Link>
 
 
       <div className="hidden md:flex flex-1 justify-center items-center mr-20">
