@@ -3,7 +3,6 @@ import React, { Suspense, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import useDevToolsPrevention from './hook/useDevToolsPrevention';
-import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react";
 import { Helmet } from 'react-helmet';
 
@@ -397,7 +396,6 @@ const AppContent = () => {
             </Routes>
           </Suspense>
         </ErrorBoundary>
-        <SpeedInsights />
         <Analytics />
       </div>
     </ThemeProvider>
