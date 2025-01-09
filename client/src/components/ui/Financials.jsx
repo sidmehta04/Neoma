@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Download, FileSpreadsheet, AlertCircle } from 'lucide-react';
-import { supabase } from '../../lib/superbase';
 import { useTheme } from '../../context/ThemeContext';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const statements = [
   {
@@ -64,75 +66,66 @@ const FinancialsTab = ({ companyId }) => {
   const [downloading, setDownloading] = useState({});
   const [fileStatus, setFileStatus] = useState({});
   const [availableFiles, setAvailableFiles] = useState({});
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const checkAvailableFiles = async () => {
-      const fileCheckPromises = statements.map(async (statement) => {
-        try {
-          const { data, error } = await supabase.storage
-            .from('financial_documents')
-            .list(`financial_statements/${companyId}/${statement.type}`, {
-              limit: 10,
-              offset: 0,
-              sortBy: { column: 'name', order: 'desc' }
-            });
-
-          if (error) {
-            console.error(`Error checking files for ${statement.type}:`, error);
-            return [statement.type, []];
+      try {
+        const response = await axios.get(
+          `${API_URL}/financial-documents/${companyId}`,
+          { 
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
+        );
 
-          const csvFiles = data.filter(file => file.name.toLowerCase().endsWith('.csv'));
-          return [statement.type, csvFiles];
-        } catch (error) {
-          console.error(`Unexpected error checking files for ${statement.type}:`, error);
-          return [statement.type, []];
-        }
-      });
-
-      const fileChecks = await Promise.all(fileCheckPromises);
-      const availableFilesMap = Object.fromEntries(
-        fileChecks.map(([type, files]) => [type, files])
-      );
-      setAvailableFiles(availableFilesMap);
-
-      const statusMap = Object.fromEntries(
-        Object.entries(availableFilesMap).map(([type, files]) => 
-          [type, files.length > 0 ? 'available' : 'not_available']
-        )
-      );
-      setFileStatus(statusMap);
+        setAvailableFiles(response.data);
+        const statusMap = Object.fromEntries(
+          Object.entries(response.data).map(([type, files]) => 
+            [type, files.length > 0 ? 'available' : 'not_available']
+          )
+        );
+        setFileStatus(statusMap);
+        setError(null);
+      } catch (err) {
+        console.error('Error checking available files:', err);
+        const errorStatus = Object.fromEntries(
+          statements.map(({ type }) => [type, 'not_available'])
+        );
+        setFileStatus(errorStatus);
+        setError('Failed to load file information');
+      }
     };
 
-    checkAvailableFiles();
+    if (companyId) {
+      checkAvailableFiles();
+    }
   }, [companyId]);
 
   const handleDownload = async (statementType) => {
     try {
       setDownloading(prev => ({ ...prev, [statementType]: true }));
       
-      const files = availableFiles[statementType] || [];
-      
-      if (files.length === 0) {
-        setFileStatus(prev => ({ 
-          ...prev, 
-          [statementType]: 'not_available' 
-        }));
+      if (fileStatus[statementType] !== 'available') {
         return;
       }
-  
-      const mostRecentFile = files[0];
-      const filePath = `financial_statements/${companyId}/${statementType}/${mostRecentFile.name}`;
-      
-      const { data, error } = await supabase.storage
-        .from('financial_documents')
-        .createSignedUrl(filePath, 3600);
-  
-      if (error) {
-        console.error('Download error:', error);
-        return;
+
+      const response = await axios.get(
+        `${API_URL}/financial-documents/${companyId}/${statementType}/download`,
+        { 
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.data.signedUrl) {
+        throw new Error('No download URL received');
       }
-      
+
       const downloadFile = (url) => {
         const link = document.createElement('a');
         link.href = url;
@@ -141,16 +134,28 @@ const FinancialsTab = ({ companyId }) => {
         link.click();
         document.body.removeChild(link);
       };
-  
-      downloadFile(data.signedUrl);
-    } catch (error) {
-      console.error('Error downloading file:', error);
+
+      downloadFile(response.data.signedUrl);
+      setError(null);
+    } catch (err) {
+      console.error('Error downloading file:', err);
+      setFileStatus(prev => ({ 
+        ...prev, 
+        [statementType]: 'not_available' 
+      }));
+      setError('Failed to download file');
     } finally {
       setDownloading(prev => ({ ...prev, [statementType]: false }));
     }
   };
+
   return (
     <div className="w-full p-4 sm:p-6 space-y-6 sm:space-y-8">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+          {error}
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         {statements.map(({ type, title, description }) => (
           <div 

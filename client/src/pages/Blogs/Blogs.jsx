@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { supabase } from '../../lib/superbase';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const BlogPage = () => {
   const navigate = useNavigate();
@@ -16,14 +18,8 @@ const BlogPage = () => {
 
   const fetchBlogPosts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('id, title, description, read_time, published_at, slug, featured_image')
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
-
-      if (error) throw error;
-      setBlogPosts(data);
+      const response = await axios.get(`${API_URL}/blog-posts`);
+      setBlogPosts(response.data);
     } catch (error) {
       console.error('Error fetching blog posts:', error);
       setError('Failed to load blog posts');

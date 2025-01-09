@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { supabase } from '../../lib/superbase';
 import { ArrowLeft, Clock, Calendar } from 'lucide-react';
 import { create, all } from 'mathjs';
+import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const math = create(all);
 
@@ -22,18 +23,11 @@ const BlogPost = () => {
 
   const fetchBlogPost = async () => {
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('slug', slug)
-        .eq('status', 'published')
-        .single();
-
-      if (error) throw error;
-      setPost(data);
+      const response = await axios.get(`${API_URL}/blog-posts/${slug}`);
+      setPost(response.data);
     } catch (error) {
       console.error('Error fetching blog post:', error);
-      setError('Failed to load blog post');
+      setError(error.response?.data?.error || 'Failed to load blog post');
     } finally {
       setLoading(false);
     }
