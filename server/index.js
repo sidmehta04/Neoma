@@ -16,21 +16,37 @@ console.log('Environment check:', {
   nodeEnv: process.env.NODE_ENV
 });
 
-// CORS configuration with Vercel URL
-const corsOptions = {
-  origin: [
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://neoma-tsta.vercel.app',  // Add your frontend Vercel URL
-    'https://neoma-two.vercel.app'  // Add your backend Vercel URL
-
-  ].filter(Boolean),
+// CORS configuration
+app.use(cors({
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'https://neoma-tsta.vercel.app',
+      'https://neoma-two.vercel.app'
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      console.log('Blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
-  credentials: true
-};
+  credentials: true,
+  maxAge: 86400 // CORS preflight cache for 24 hours
+}));
 
-app.use(cors(corsOptions));
+// Add headers for better error handling
+app.use((req, res, next) => {
+  res.header('Content-Type', 'application/json');
+  next();
+});
+
 app.use(express.json());
 
 // Initialize Supabase client
@@ -67,6 +83,15 @@ app.get('/api/health', (req, res) => {
       platform: process.env.VERCEL_URL ? 'Vercel' : 'Local',
       url: process.env.VERCEL_URL || `http://localhost:${port}`,
       region: process.env.VERCEL_REGION || 'local'
+    },
+    cors: {
+      enabled: true,
+      allowedOrigins: [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://neoma-tsta.vercel.app',
+        'https://neoma-two.vercel.app'
+      ]
     }
   };
   
@@ -89,9 +114,22 @@ app.get('/api/system', (req, res) => {
 const blogRoutes = require('./routes/blogs')(supabase);
 const financialsRoutes = require('./routes/financials')(supabase);
 
+// Add logging middleware for routes
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
 // Mount routes
-app.use('/api/blog-posts', blogRoutes);
-app.use('/api/financial-documents', financialsRoutes);
+app.use('/api/blog-posts', (req, res, next) => {
+  console.log('Blog route hit:', req.path);
+  next();
+}, blogRoutes);
+
+app.use('/api/financial-documents', (req, res, next) => {
+  console.log('Financials route hit:', req.path);
+  next();
+}, financialsRoutes);
 
 // API status endpoint
 app.get('/api/status', (req, res) => {
@@ -120,6 +158,17 @@ app.use((err, req, res, next) => {
   res.status(500).json({ 
     error: 'Internal server error',
     details: err.message,
+    timestamp: new Date().toISOString(),
+    path: req.path
+  });
+});
+
+// Catch-all for undefined routes
+app.use('*', (req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: 'The requested resource does not exist',
+    path: req.originalUrl,
     timestamp: new Date().toISOString()
   });
 });
@@ -141,6 +190,11 @@ app.listen(port, () => {
   `);
 });
 
+// Global error handling
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
 });
