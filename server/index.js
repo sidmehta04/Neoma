@@ -12,16 +12,22 @@ const port = process.env.PORT || 5001;
 console.log('Environment check:', {
   port: port,
   supabaseUrl: process.env.SUPABASE_URL,
-  hasServiceKey: !!process.env.SUPABASE_SERVICE_KEY
+  hasServiceKey: !!process.env.SUPABASE_SERVICE_KEY,
+  nodeEnv: process.env.NODE_ENV
 });
 
-// CORS configuration
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'],
+// CORS configuration with Vercel URL
+const corsOptions = {
+  origin: [
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ].filter(Boolean),
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
-}));
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Initialize Supabase client
@@ -35,18 +41,75 @@ try {
   console.error('Error initializing Supabase client:', error);
 }
 
+// Root endpoint with deployment info
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Backend API is running',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+    deployment: process.env.VERCEL_URL ? 'Vercel' : 'Local',
+    version: '1.0.0'
+  });
+});
+
+// Health check endpoint with detailed status
+app.get('/api/health', (req, res) => {
+  const status = {
+    service: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV,
+    supabase: !!supabase ? 'connected' : 'not connected',
+    deployment: {
+      platform: process.env.VERCEL_URL ? 'Vercel' : 'Local',
+      url: process.env.VERCEL_URL || `http://localhost:${port}`,
+      region: process.env.VERCEL_REGION || 'local'
+    }
+  };
+  
+  res.json(status);
+});
+
+// System info endpoint
+app.get('/api/system', (req, res) => {
+  res.json({
+    nodeVersion: process.version,
+    platform: process.platform,
+    memory: process.memoryUsage(),
+    cpu: process.cpuUsage(),
+    pid: process.pid,
+    uptime: process.uptime()
+  });
+});
+
 // Import routes
 const blogRoutes = require('./routes/blogs')(supabase);
 const financialsRoutes = require('./routes/financials')(supabase);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
 // Mount routes
 app.use('/api/blog-posts', blogRoutes);
 app.use('/api/financial-documents', financialsRoutes);
+
+// API status endpoint
+app.get('/api/status', (req, res) => {
+  const routes = {
+    health: '/api/health',
+    system: '/api/system',
+    blogs: '/api/blog-posts',
+    financials: '/api/financial-documents'
+  };
+  
+  res.json({
+    status: 'operational',
+    timestamp: new Date().toISOString(),
+    availableRoutes: routes,
+    environment: process.env.NODE_ENV,
+    deployment: {
+      url: process.env.VERCEL_URL || `http://localhost:${port}`,
+      type: process.env.VERCEL_URL ? 'production' : 'development'
+    }
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -60,8 +123,19 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-  console.log(`Health check available at: http://localhost:${port}/api/health`);
+  console.log(`
+╔════════════════════════════════════════╗
+║         Backend Server Started          ║
+╠════════════════════════════════════════╣
+║                                        ║
+║  Health: http://localhost:${port}/api/health   ║
+║  Status: http://localhost:${port}/api/status   ║
+║                                        ║
+║  Environment: ${process.env.NODE_ENV || 'development'}                ║
+║  Supabase: ${!!supabase ? 'Connected' : 'Not Connected'}                    ║
+║                                        ║
+╚════════════════════════════════════════╝
+  `);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
