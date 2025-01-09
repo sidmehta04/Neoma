@@ -23,7 +23,7 @@ const BlogPost = () => {
 
   const fetchBlogPost = async () => {
     try {
-      const response = await axios.get(`${API_URL}/blog-posts/api/${slug}`);
+      const response = await axios.get(`${API_URL}/api/blog-posts/${slug}`);
       setPost(response.data);
     } catch (error) {
       console.error('Error fetching blog post:', error);
