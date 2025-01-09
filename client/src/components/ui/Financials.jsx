@@ -3,7 +3,7 @@ import { Download, FileSpreadsheet, AlertCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL|| import.meta.env.VITE_API_URL2 || 'http://localhost:5001/api';
 
 const statements = [
   {

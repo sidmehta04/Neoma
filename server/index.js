@@ -23,7 +23,9 @@ app.use(cors({
       'http://localhost:3000',
       'http://localhost:5173',
       'https://neoma-tsta.vercel.app',
-      'https://neoma-two.vercel.app'
+      'https://neoma-two.vercel.app',
+      'https://neomacapital.com',
+      'https://api.neomacapital.com'
     ];
     
     // Allow requests with no origin (like mobile apps or curl requests)
