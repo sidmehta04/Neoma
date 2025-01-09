@@ -21,7 +21,10 @@ const corsOptions = {
   origin: [
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
     'http://localhost:3000',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'https://neoma-tsta.vercel.app',  // Add your frontend Vercel URL
+    'https://neoma-sidmehta04s-projects.vercel.app'  // Add your backend Vercel URL
+
   ].filter(Boolean),
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
