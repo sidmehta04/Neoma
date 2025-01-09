@@ -1,6 +1,82 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../lib/superbase";
-import { X, Check, AlertCircle } from "lucide-react";
+import { X, Check, AlertCircle, ChevronDown } from "lucide-react";
+
+// Country codes data with flags and validation rules
+const countryCodes = [
+  { 
+    code: "91", 
+    country: "India", 
+    flag: "🇮🇳",
+    minLength: 10,
+    maxLength: 10,
+    pattern: "^[6-9]\\d{9}$",
+    example: "9876543210"
+  },
+  { 
+    code: "1", 
+    country: "United States", 
+    flag: "🇺🇸",
+    minLength: 10,
+    maxLength: 10,
+    pattern: "^[2-9]\\d{9}$",
+    example: "2345678901"
+  },
+  { 
+    code: "44", 
+    country: "United Kingdom", 
+    flag: "🇬🇧",
+    minLength: 10,
+    maxLength: 10,
+    pattern: "^[27]\\d{9}$",
+    example: "7123456789"
+  },
+  { 
+    code: "61", 
+    country: "Australia", 
+    flag: "🇦🇺",
+    minLength: 9,
+    maxLength: 9,
+    pattern: "^[4]\\d{8}$",
+    example: "412345678"
+  },
+  { 
+    code: "86", 
+    country: "China", 
+    flag: "🇨🇳",
+    minLength: 11,
+    maxLength: 11,
+    pattern: "^[1]\\d{10}$",
+    example: "13812345678"
+  },
+  { 
+    code: "81", 
+    country: "Japan", 
+    flag: "🇯🇵",
+    minLength: 10,
+    maxLength: 10,
+    pattern: "^[789]\\d{9}$",
+    example: "7012345678"
+  },
+  { 
+    code: "65", 
+    country: "Singapore", 
+    flag: "🇸🇬",
+    minLength: 8,
+    maxLength: 8,
+    pattern: "^[689]\\d{7}$",
+    example: "81234567"
+  },
+  { 
+    code: "971", 
+    country: "UAE", 
+    flag: "🇦🇪",
+    minLength: 9,
+    maxLength: 9,
+    pattern: "^[5]\\d{8}$",
+    example: "501234567"
+  }
+];
 
 const Alert = ({ children, variant = "error" }) => {
   const styles = {
@@ -20,10 +96,12 @@ const ContactDialog = ({ isOpen, onClose }) => {
     name: "",
     phone: "",
   });
+  const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]); // India as default
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [phoneError, setPhoneError] = useState("");
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
 
   // Reset form state when dialog opens/closes
   useEffect(() => {
@@ -32,19 +110,112 @@ const ContactDialog = ({ isOpen, onClose }) => {
       setError("");
       setSuccess(false);
       setPhoneError("");
+      setSelectedCountry(countryCodes[0]);
     }
   }, [isOpen]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.country-selector')) {
+        setIsCountryDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Additional validation patterns for unrealistic numbers
+  const invalidPatterns = {
+    repeatedDigits: /^(\d)\1+$/,  // Same digit repeated (e.g., 999999999)
+    sequential: /^(?:0123456789|1234567890|9876543210)+$/,  // Sequential numbers
+    sameDigitGroups: /^(\d)\1{3,}/, // Four or more same digits in a row
+    commonFake: /^(0{5,}|1{5,}|2{5,}|3{5,}|4{5,}|5{5,}|6{5,}|7{5,}|8{5,}|9{5,})/, // Five or more repeated digits
+    tooSimple: /^(0000|1111|2222|3333|4444|5555|6666|7777|8888|9999)/, // Simple repeated patterns
+  };
 
   // Phone number validation
   const validatePhoneNumber = (phone) => {
     // Remove all non-digits
     const cleanPhone = phone.replace(/\D/g, "");
     
-    // Basic validation for international phone numbers
-    // Should be between 10 and 15 digits
-    if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-      setPhoneError("Please enter a valid phone number with country code");
+    // Get validation rules for selected country
+    const { minLength, maxLength, pattern, example } = selectedCountry;
+    
+    // Check length
+    if (cleanPhone.length < minLength || cleanPhone.length > maxLength) {
+      setPhoneError(`Phone number must be ${minLength} digits for ${selectedCountry.country}. Example: ${example}`);
       return false;
+    }
+    
+    // Check country-specific pattern
+    const regex = new RegExp(pattern);
+    if (!regex.test(cleanPhone)) {
+      setPhoneError(`Invalid phone number format for ${selectedCountry.country}. Example: ${example}`);
+      return false;
+    }
+
+    // Check for unrealistic number patterns
+    if (invalidPatterns.repeatedDigits.test(cleanPhone)) {
+      setPhoneError("Invalid phone number: Cannot use same digit repeatedly");
+      return false;
+    }
+
+    if (invalidPatterns.sequential.test(cleanPhone)) {
+      setPhoneError("Invalid phone number: Cannot use sequential numbers");
+      return false;
+    }
+
+    if (invalidPatterns.sameDigitGroups.test(cleanPhone)) {
+      setPhoneError("Invalid phone number: Too many repeated digits");
+      return false;
+    }
+
+    if (invalidPatterns.commonFake.test(cleanPhone)) {
+      setPhoneError("Invalid phone number: Pattern appears to be fake");
+      return false;
+    }
+
+    if (invalidPatterns.tooSimple.test(cleanPhone)) {
+      setPhoneError("Invalid phone number: Pattern too simple");
+      return false;
+    }
+
+    // Additional India-specific validation
+    if (selectedCountry.code === "91") {
+      // Check for invalid Indian prefixes
+      const invalidIndianPrefixes = /^(0|1|2|3|4|5)/;
+      if (invalidIndianPrefixes.test(cleanPhone)) {
+        setPhoneError("Invalid Indian mobile number: Must start with 6, 7, 8, or 9");
+        return false;
+      }
+
+      // Check for known invalid Indian patterns
+      const invalidIndianPatterns = [
+        '9999999999', '8888888888', '7777777777', '6666666666',
+        '1234567890', '0123456789', '0987654321',
+      ];
+      if (invalidIndianPatterns.includes(cleanPhone)) {
+        setPhoneError("Invalid phone number: Commonly used fake number");
+        return false;
+      }
+    }
+
+    // Add similar specific validations for other countries
+    if (selectedCountry.code === "1") {  // US
+      const invalidUSPrefixes = /^(0|1)/;
+      if (invalidUSPrefixes.test(cleanPhone)) {
+        setPhoneError("Invalid US number: Cannot start with 0 or 1");
+        return false;
+      }
+
+      // Check for valid area codes (simplified example)
+      const validAreaCode = /^([2-9][0-9][0-9])/;
+      if (!validAreaCode.test(cleanPhone)) {
+        setPhoneError("Invalid US area code");
+        return false;
+      }
     }
     
     setPhoneError("");
@@ -53,12 +224,8 @@ const ContactDialog = ({ isOpen, onClose }) => {
 
   // Format phone number as user types
   const formatPhoneNumber = (phone) => {
-    // Keep the + sign if it exists at the start
-    const hasPlus = phone.startsWith("+");
     // Remove all non-digits
-    const cleaned = phone.replace(/\D/g, "");
-    // Add back the + if it existed
-    return hasPlus ? `+${cleaned}` : cleaned;
+    return phone.replace(/\D/g, "");
   };
 
   const handleInputChange = (e) => {
@@ -79,6 +246,11 @@ const ContactDialog = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleCountrySelect = (country) => {
+    setSelectedCountry(country);
+    setIsCountryDropdownOpen(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -92,32 +264,32 @@ const ContactDialog = ({ isOpen, onClose }) => {
     }
 
     try {
+      const fullPhoneNumber = `+${selectedCountry.code}${formData.phone}`;
+
       // Save to Supabase
       const { error: supabaseError } = await supabase
         .from("early_subscribers")
         .insert([
           {
             name: formData.name,
-            phone: formData.phone,
+            phone: fullPhoneNumber,
           },
         ]);
 
       if (supabaseError) throw supabaseError;
 
       // Prepare WhatsApp redirect
-      const businessPhone = "919220445243"; // Add country code (91) for India
+      const businessPhone = "919220445243";
       const message = encodeURIComponent(
         `Hi, I'm ${formData.name}. I'm interested in learning more about NEOMA.`
       );
       
-      // Create WhatsApp URL - to send message to business
       const whatsappUrl = `https://wa.me/${businessPhone}?text=${message}`;
 
       setSuccess(true);
       
-      // Redirect to WhatsApp after short delay
       setTimeout(() => {
-        window.location.href = whatsappUrl; // Use direct redirect instead of window.open
+        window.location.href = whatsappUrl;
         onClose();
         setFormData({ name: "", phone: "" });
       }, 1500);
@@ -197,31 +369,74 @@ const ContactDialog = ({ isOpen, onClose }) => {
               />
             </div>
 
-            {/* Phone Input */}
+            {/* Phone Input with Country Selector */}
             <div>
               <label 
                 htmlFor="phone" 
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Phone Number * <span className="text-gray-500">(with country code)</span>
+                Phone Number *
               </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                className={`w-full px-3 sm:px-4 py-2 border rounded-md 
-                         text-sm sm:text-base
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 
-                         text-gray-900 bg-white transition-all duration-200
-                         placeholder:text-gray-400
-                         disabled:opacity-50 disabled:cursor-not-allowed
-                         ${phoneError ? 'border-red-300' : 'border-gray-300'}`}
-                placeholder="e.g. +1234567890"
-                value={formData.phone}
-                onChange={handleInputChange}
-                disabled={isLoading}
-              />
+              <div className="flex gap-2">
+                {/* Country Code Selector */}
+                <div className="relative country-selector">
+                  <button
+                    type="button"
+                    onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                    className="h-full flex items-center justify-between gap-2 px-3 py-2 border border-gray-300 rounded-md
+                             text-sm sm:text-base bg-white min-w-[100px]
+                             hover:bg-gray-50 transition-colors duration-200
+                             focus:outline-none focus:ring-2 focus:ring-blue-500
+                             disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isLoading}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{selectedCountry.flag}</span>
+                      <span className="font-medium">+{selectedCountry.code}</span>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  </button>
+
+                  {/* Country Dropdown */}
+                  {isCountryDropdownOpen && (
+                    <div className="absolute z-10 left-0 mt-1 w-64 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                      {countryCodes.map((country) => (
+                        <button
+                          key={country.code}
+                          type="button"
+                          onClick={() => handleCountrySelect(country)}
+                          className="w-full px-4 py-2.5 text-left flex items-center gap-3
+                                   hover:bg-gray-50 transition-colors duration-200
+                                   focus:outline-none focus:bg-gray-50"
+                        >
+                          <span className="text-lg">{country.flag}</span>
+                          <span className="flex-1 font-medium">{country.country}</span>
+                          <span className="text-gray-500 tabular-nums">+{country.code}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Phone Number Input */}
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  className={`flex-1 px-3 sm:px-4 py-2 border rounded-md 
+                           text-sm sm:text-base
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 
+                           text-gray-900 bg-white transition-all duration-200
+                           placeholder:text-gray-400
+                           disabled:opacity-50 disabled:cursor-not-allowed
+                           ${phoneError ? 'border-red-300' : 'border-gray-300'}`}
+                  placeholder={`Example: ${selectedCountry.example}`}
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                />
+              </div>
               {phoneError && (
                 <p className="mt-1 text-sm text-red-500">
                   {phoneError}
