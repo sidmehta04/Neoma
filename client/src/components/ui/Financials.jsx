@@ -72,7 +72,7 @@ const FinancialsTab = ({ companyId }) => {
     const checkAvailableFiles = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/financial-documents/api/${companyId}`,
+          `${API_URL}/api/financial-documents/${companyId}`,
           { 
             withCredentials: true,
             headers: {
