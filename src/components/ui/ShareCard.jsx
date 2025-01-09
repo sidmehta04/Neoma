@@ -86,14 +86,19 @@ const ShareCard = ({
           >
             Current Price
           </p>
-          <p className={`text-lg sm:text-xl md:text-2xl font-bold transition-colors duration-300
-            ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
-          >
-            {price ? `₹${Number(price).toFixed(2)}` : 'N/A'}
-          </p>
+          <div className="relative">
+            <p className={`text-lg sm:text-xl md:text-2xl font-bold transition-colors duration-300 blur-md select-none
+              ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
+            >
+              {price ? `₹${Number(price).toFixed(2)}` : 'N/A'}
+            </p>
+            <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+              *Price hidden
+            </p>
+          </div>
         </div>
         <div
-          className={`flex items-center space-x-1 ${
+          className={`flex items-center space-x-1 blur-md select-none ${
             isPositive 
               ? "text-green-500 dark:text-green-400" 
               : "text-red-500 dark:text-red-400"

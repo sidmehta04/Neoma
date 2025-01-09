@@ -417,14 +417,16 @@ const ShareDetail = () => {
             </div>
 
             {/* Stock Price */}
+
+            {/* Stock Price */}
             <div className="flex flex-col items-start sm:items-end">
               <p
-                className={`text-xl sm:text-2xl lg:text-4xl font-bold ${styles.text.primary[theme]}`}
+                className={`text-xl sm:text-2xl lg:text-4xl font-bold ${styles.text.primary[theme]} blur-lg select-none`}
               >
                 ₹{formatters.formatNumber(companyData.latestPrice?.price)}
               </p>
               <div
-                className={`flex items-center space-x-1 sm:space-x-2 ${
+                className={`flex items-center space-x-1 sm:space-x-2 blur-sm select-none ${
                   companyData.latestPrice?.change_percentage >= 0
                     ? "text-green-500"
                     : "text-red-500"
@@ -441,6 +443,9 @@ const ShareDetail = () => {
                   )}
                 </span>
               </div>
+              <p className={`text-xs mt-1 ${styles.text.secondary[theme]}`}>
+                *Price hidden for regulatory purpose please contact us directly for best price
+              </p>
             </div>
           </div>
 
@@ -466,7 +471,7 @@ const ShareDetail = () => {
                 <span
                   className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base`}
                 >
-                  Last Updated Price Date
+                  Last Updated The Finances on 
                 </span>
                 <span
                   className={`${styles.text.primary[theme]} text-xs sm:text-sm lg:text-base font-medium`}
