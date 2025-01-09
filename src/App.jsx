@@ -263,7 +263,7 @@ const routes = [
       ],
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://neomacapital.com"
+        "@id": "https://www.neomacapital.com/"
       }
     }
   },
