@@ -7,7 +7,7 @@ import ContactDialog from "./Inquiry";
 const HeroSection = () => {
   const { theme } = useTheme();
   const [text, setText] = useState("");
-  const fullText = "Your Equity\nOur Expertise.";
+  const fullText = "Exploring Oppurtunities\nWith Neoma.";
   const [cursorVisible, setCursorVisible] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -87,7 +87,7 @@ const HeroSection = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl 
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl 
                       font-bold mb-4 sm:mb-6 text-white 
                       whitespace-pre-line text-left tracking-tight
                       leading-tight sm:leading-tight md:leading-tight">
@@ -107,10 +107,7 @@ const HeroSection = () => {
                      bg-clip-text text-transparent bg-300% 
                      leading-relaxed sm:leading-relaxed
                      opacity-100 animate-fade-in">
-            Experience the next generation of share trading: Secure transactions,
-            innovative solutions, and an intuitive platform designed for modern
-            investors.
-          </p>
+Experience the 'next moon' as a beacon of fresh starts and financial growth. Just as the moon's phases mark new beginnings, let us guide you through the cycles of wealth creation.           </p>
 
           {/* CTA Button */}
           <button
