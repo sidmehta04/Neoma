@@ -113,7 +113,7 @@ const FinancialsTab = ({ companyId }) => {
       }
 
       const response = await axios.get(
-        `${API_URL}/financial-documents/${companyId}/${statementType}/download`,
+        `${API_URL}/api/financial-documents/${companyId}/${statementType}/download`,
         { 
           withCredentials: true,
           headers: {
