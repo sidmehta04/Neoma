@@ -107,7 +107,7 @@ const HeroSection = () => {
                      bg-clip-text text-transparent bg-300% 
                      leading-relaxed sm:leading-relaxed
                      opacity-100 animate-fade-in">
-Experience the 'next moon' as a beacon of fresh starts and financial growth. Just as the moon's phases mark new beginnings, let us guide you through the cycles of wealth creation.           </p>
+Experience the 'new moon' as a beacon of fresh starts and financial growth. Just as the moon's phases mark new beginnings, let us guide you through the cycles of wealth creation.           </p>
 
           {/* CTA Button */}
           <button

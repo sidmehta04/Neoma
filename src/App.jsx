@@ -257,7 +257,7 @@ const routes = [
       "@type": "Organization",
       "name": "Neoma Capital",
       "description": "Leading investment management firm offering comprehensive financial solutions",
-      "url": "https://neomacapital.com",
+      "url": "https://www.neomacapital.com/",
       "sameAs": [
         "https://www.linkedin.com/company/neomacapital"
       ],
