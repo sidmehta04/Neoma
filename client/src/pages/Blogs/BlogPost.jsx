@@ -4,7 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { ArrowLeft, Clock, Calendar } from 'lucide-react';
 import { create, all } from 'mathjs';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL|| import.meta.env.VITE_API_URL2 || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL|| import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
 
 const math = create(all);
 
