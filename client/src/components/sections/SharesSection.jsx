@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { supabase } from '../../lib/superbase';
+import axios from 'axios';
 import ShareCard from '../ui/ShareCard';
 import SearchBar from '../ui/Searchbar';
+
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
 
 const SharesSection = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const [shares, setShares] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [visibleShares, setVisibleShares] = useState(6);
   const [filteredShares, setFilteredShares] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,83 +20,31 @@ const SharesSection = () => {
   useEffect(() => {
     const fetchShares = async () => {
       try {
-        const { data, error } = await supabase
-          .from('companies')
-          .select(`
-            id,
-            name,
-            symbol,
-            logo,
-            stock_prices (
-              price,
-              change_percentage,
-              trade_date,
-              marketcap
-            )
-          `);
-  
-        if (error) throw error;
-  
-        const processedShares = data
-          .filter(company => company.stock_prices && company.stock_prices.length > 0)
-          .map(company => {
-            const latestPrice = company.stock_prices.reduce((latest, current) => {
-              if (!latest.trade_date) return current;
-              return new Date(current.trade_date) > new Date(latest.trade_date) ? current : latest;
-            }, {});
-  
-            return {
-              id: company.id,
-              name: company.name,
-              logo: company.logo || '', // Use the logo URL from the database
-              price: latestPrice.price.toFixed(2),
-              change: latestPrice.change_percentage?.toFixed(2) || '0.00',
-              marketCap: latestPrice.marketcap || 'N/A',
-            };
-          });
-  
+        const response = await axios.get(`${API_URL}/api/shares`, {
+          withCredentials: true
+        });
+
+        const processedShares = response.data.map(share => ({
+          id: share.id,
+          name: share.name,
+          logo: share.logo || '',
+          price: share.latestPrice.price.toFixed(2),
+          change: share.latestPrice.change_percentage?.toFixed(2) || '0.00',
+          marketCap: share.latestPrice.marketcap || 'N/A',
+        }));
+
         setShares(processedShares);
         handleSearch(searchQuery, processedShares);
-      } catch (error) {
-        console.error('Error fetching shares:', error);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching shares:', err);
+        setError('Failed to load shares. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchShares();
-
-    const subscription = supabase
-      .channel('stock_prices_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'stock_prices'
-        },
-        payload => {
-          setShares(prevShares => {
-            const updatedShares = prevShares.map(share => {
-              if (share.id === payload.new.company_id) {
-                return {
-                  ...share,
-                  price: payload.new.price.toFixed(2),
-                  change: payload.new.change_percentage?.toFixed(2) || '0.00',
-                  marketCap: payload.new.market_cap || 'N/A'
-                };
-              }
-              return share;
-            });
-            return updatedShares;
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(subscription);
-    };
   }, []);
 
   const handleSearch = (query, sharesList = shares) => {
@@ -134,6 +85,17 @@ const SharesSection = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 flex justify-center items-center transition-colors duration-300"
+           style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="text-base sm:text-lg text-red-500">
+          {error}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className="w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 transition-colors duration-300"
              style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -167,7 +129,7 @@ const SharesSection = () => {
             >
               <ShareCard
                 name={share.name}
-                logo={share.logo} // Pass the full logo URL to ShareCard
+                logo={share.logo}
                 price={share.price}
                 change={share.change}
                 marketCap={share.marketCap}

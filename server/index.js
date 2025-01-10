@@ -25,9 +25,9 @@ app.use(cors({
       'https://neoma-tsta.vercel.app',
       'https://neoma-two.vercel.app',
       'https://www.neomacapital.com',
-      'https://api.neomacapital.com',    ];
+      'https://api.neomacapital.com'
+    ];
     
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
@@ -39,7 +39,7 @@ app.use(cors({
   },
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true,
-  maxAge: 86400 // CORS preflight cache for 24 hours
+  maxAge: 86400
 }));
 
 // Add headers for better error handling
@@ -93,7 +93,7 @@ app.get('/api/health', (req, res) => {
         'https://neoma-tsta.vercel.app',
         'https://neoma-two.vercel.app',
         'https://www.neomacapital.com',
-      'https://api.neomacapital.com'
+        'https://api.neomacapital.com'
       ]
     }
   };
@@ -116,6 +116,9 @@ app.get('/api/system', (req, res) => {
 // Import routes
 const blogRoutes = require('./routes/blogs')(supabase);
 const financialsRoutes = require('./routes/financials')(supabase);
+const contactRoutes = require('./routes/contact')(supabase);
+const sharesRoutes = require('./routes/shares')(supabase);
+
 
 // Add logging middleware for routes
 app.use((req, res, next) => {
@@ -134,13 +137,23 @@ app.use('/api/financial-documents', (req, res, next) => {
   next();
 }, financialsRoutes);
 
+app.use('/api/contact', (req, res, next) => {
+  console.log('Contact route hit:', req.path);
+  next();
+}, contactRoutes);
+app.use('/api/shares', (req, res, next) => {
+  console.log('Shares route hit:', req.path);
+  next();
+}, sharesRoutes);
+
 // API status endpoint
 app.get('/api/status', (req, res) => {
   const routes = {
     health: '/api/health',
     system: '/api/system',
     blogs: '/api/blog-posts',
-    financials: '/api/financial-documents'
+    financials: '/api/financial-documents',
+    contact: '/api/contact'
   };
   
   res.json({
@@ -154,6 +167,22 @@ app.get('/api/status', (req, res) => {
     }
   });
 });
+
+// Rate limiting middleware (optional)
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    error: 'Too many requests',
+    message: 'Please try again later',
+    timestamp: new Date().toISOString()
+  }
+});
+
+// Apply rate limiting to contact route
+app.use('/api/contact', limiter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

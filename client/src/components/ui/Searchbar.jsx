@@ -145,7 +145,7 @@ const SearchBar = ({
   };
 
   return (
-    <div className={`relative z-[60] ${className}`} ref={searchRef}>
+    <div className={`relative z-[40] ${className}`} ref={searchRef}>
       <div className="relative">
         <input
           type="text"
