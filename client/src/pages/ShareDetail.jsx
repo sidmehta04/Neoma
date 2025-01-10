@@ -23,6 +23,9 @@ import {
 } from "../components/ui/dropdown-menu";
 import { styles } from "../Styles/shareDetailStyles";
 import { formatters } from "../Styles/shareDetailUtils";
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL||import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
 
 // Lazy load the financials tab
 const FinancialsTab = lazy(() => import("../components/ui/Financials"));
@@ -277,64 +280,38 @@ const ShareDetail = () => {
       if (!shareName) return;
 
       try {
-        // Modified query to handle optional relationships
-        const { data: companies, error: companyError } = await supabase
-          .from("companies")
-          .select(
-            `
-            id, name, symbol, sector, face_value,
-            cin, registered_office, incorporation_date,
-            board_members:board_members (id, name, position, category),
-            company_subsidiaries:company_subsidiaries (id, name, relationship_type, ownership_percentage),
-            shareholding_pattern:shareholding_pattern (id, category, shares, percentage, as_of_date),
-            stock_prices:stock_prices (id, price, change_percentage, trade_date, volume, marketcap, pe_ratio, book_valur)
-          `
-          )
-          .eq("name", decodeURIComponent(shareName))
-          .order("id", { ascending: true });
-
-        if (companyError) throw companyError;
-
-        if (!companies || companies.length === 0) {
-          throw new Error("Company not found");
-        }
-
-        const company = companies[0];
-
-        // Sort related data
-        company.stock_prices = (company.stock_prices || []).sort(
-          (a, b) => new Date(b.trade_date) - new Date(a.trade_date)
+        const response = await axios.get(
+          `${API_URL}/api/shares-detail/${encodeURIComponent(shareName)}`,
+          { withCredentials: true }
         );
 
-        company.shareholding_pattern = (
-          company.shareholding_pattern || []
-        ).sort((a, b) => new Date(b.as_of_date) - new Date(a.as_of_date));
-
-        if (companyError) throw companyError;
-
         if (isMounted) {
-          setCompanyData({
-            ...company,
-            latestPrice: company.stock_prices[0],
-            latestShareholding: company.shareholding_pattern[0],
-            market_cap: company.stock_prices[0]?.marketcap || "N/A",
-          });
+          setCompanyData(response.data);
+          setError(null);
         }
-      } catch (error) {
-        console.error("Error fetching company data:", error);
-        if (isMounted) setError(error.message);
+      } catch (err) {
+        console.error("Error fetching company data:", err);
+        if (isMounted) {
+          setError(err.response?.data?.error || "Failed to load share details");
+        }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     setLoading(true);
     fetchCompanyData();
+
+    // Set up periodic refresh for price data (optional)
+    const refreshInterval = setInterval(fetchCompanyData, 60000); // Refresh every minute
+
     return () => {
       isMounted = false;
+      clearInterval(refreshInterval);
     };
   }, [shareName]);
-
   // Memoized values
   const metricCards = React.useMemo(
     () => [
