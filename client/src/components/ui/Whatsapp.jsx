@@ -19,7 +19,7 @@ const WhatsAppContact = () => {
   }, []);
 
   const contacts = [
-    { name: "Harsh Agarwal(CEO)", number: "+91 922044 5243" },
+    { name: "Harsh Agarwal(FOUNDER)", number: "+91 922044 5243" },
   ];
 
   const handleWhatsAppClick = (number, name) => {

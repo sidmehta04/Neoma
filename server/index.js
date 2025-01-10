@@ -118,6 +118,7 @@ const blogRoutes = require('./routes/blogs')(supabase);
 const financialsRoutes = require('./routes/financials')(supabase);
 const contactRoutes = require('./routes/contact')(supabase);
 const sharesRoutes = require('./routes/shares')(supabase);
+const contactFormRoutes = require('./routes/contact-form')(supabase);
 
 
 // Add logging middleware for routes
@@ -145,7 +146,11 @@ app.use('/api/shares', (req, res, next) => {
   console.log('Shares route hit:', req.path);
   next();
 }, sharesRoutes);
-
+// Mount contact form routes with logging
+app.use('/api/contact-form', (req, res, next) => {
+  console.log('Contact form route hit:', req.path);
+  next();
+}, contactFormRoutes);
 // API status endpoint
 app.get('/api/status', (req, res) => {
   const routes = {
