@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 const ThemeToggle = ({ isMobileMenu }) => {
   const { theme, setTheme } = useTheme();
 
+  // Effect to load saved theme preference on component mount
+  useEffect(() => {
+    // Get saved theme from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    
+    // If there's a saved theme, use it
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else {
+      // If no saved theme, check user's system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+    }
+  }, [setTheme]);
+
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    // Save theme preference to localStorage
+    localStorage.setItem('theme', newTheme);
   };
 
   if (isMobileMenu) {
