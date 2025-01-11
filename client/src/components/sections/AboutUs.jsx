@@ -16,7 +16,7 @@ const AboutImage = () => {
           height="100%"
           xmlns="http://www.w3.org/2000/svg"
         >
-<defs>
+          <defs>
             <pattern
               id="smallGrid"
               width="10"
@@ -52,7 +52,7 @@ const AboutImage = () => {
           <g transform="scale(0.75) translate(-200, -200) sm:scale(1) sm:translate(-400, -400)">
             <rect width="200%" height="200%" fill={theme === 'dark' ? 'rgb(11,15,23)' : '#FFFFFF'} />
             <rect width="200%" height="200%" fill="url(#grid)" />
-                  </g>
+          </g>
         </svg>
       </div>
       
@@ -71,7 +71,6 @@ const AboutImage = () => {
   );
 };
 
-// Rest of the component remains the same...
 const AboutSection = () => {
   const { theme } = useTheme();
 
@@ -82,23 +81,26 @@ const AboutSection = () => {
         : 'bg-gradient-to-b from-gray-50 to-white'
     }`}>
       <div className="container mx-auto px-4 sm:px-6 md:px-8 max-w-7xl">
+        {/* Centered About Us Title */}
+        <div className="text-center mb-12">
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent ${
+            theme === 'dark'
+              ? 'from-white to-white'
+              : 'from-blue-600 to-blue-900'
+          }`}>
+            About Us
+          </h2>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Image - Shown on top for mobile, left side for desktop */}
-          <div className="order-1 lg:order-none h-[300px] sm:h-[400px] lg:h-[600px]">
+          {/* Image */}
+          <div className="h-[300px] sm:h-[400px] lg:h-[600px]">
             <AboutImage />
           </div>
 
-          {/* Content section remains unchanged */}
-          <div className="order-2 lg:order-none space-y-6 sm:space-y-8">
+          {/* Content section */}
+          <div className="space-y-6 sm:space-y-8">
             <div className="prose prose-sm sm:prose lg:prose-lg max-w-none">
-              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r bg-clip-text text-transparent ${
-                theme === 'dark'
-                  ? 'from-blue-400 to-purple-400'
-                  : 'from-blue-600 to-purple-600'
-              }`}>
-                About Us
-              </h2>
-              
               <div className={`space-y-4 sm:space-y-6 ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
               }`}>
@@ -114,32 +116,35 @@ const AboutSection = () => {
                   As we navigate the complexities of the financial world together, we remain committed to fostering long-term relationships built on trust and mutual success. Join us at Neoma Capital as we embark on this journey towards growth and prosperity—together, we can illuminate your path to financial success.
                 </p>
               </div>
-
-              <div className={`mt-6 sm:mt-8 p-4 sm:p-6 rounded-xl ${
-                theme === 'dark' ? 'bg-gray-800/50' : 'bg-blue-50'
-              }`}>
-                <h3 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
-                  Join Our Journey
-                </h3>
-                <p className={`mb-4 sm:mb-6 text-base sm:text-lg leading-relaxed ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                }`}>
-                  Join us at Neoma Capital as we embark on this journey towards growth and prosperity—together, we can illuminate your path to financial success.
-                </p>
-                <Link 
-                  to="/contact"
-                  className={`inline-block px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-white rounded-lg transition-all duration-300 hover:scale-105 ${
-                    theme === 'dark'
-                      ? 'bg-blue-500 hover:bg-blue-600'
-                      : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
-                >
-                  Get Started
-                </Link>
-              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Centered Join Our Journey Section */}
+        <div className="max-w-2xl mx-auto mt-16">
+          <div className={`p-4 sm:p-6 rounded-xl text-center ${
+            theme === 'dark' ? 'transparent' : 'bg-blue-50'
+          }`}>
+            <h3 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+              Join Our Journey
+            </h3>
+            <p className={`mb-4 sm:mb-6 text-base sm:text-lg leading-relaxed ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+            }`}>
+              Join us at Neoma Capital as we embark on this journey towards growth and prosperity—together, we can illuminate your path to financial success.
+            </p>
+            <Link 
+              to="/contact"
+              className={`inline-block px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-white rounded-lg transition-all duration-300 hover:scale-105 ${
+                theme === 'dark'
+                  ? 'bg-blue-500 hover:bg-blue-600'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              }`}
+            >
+              Get Started
+            </Link>
           </div>
         </div>
       </div>
