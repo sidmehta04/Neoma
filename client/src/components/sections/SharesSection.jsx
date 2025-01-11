@@ -16,7 +16,6 @@ const SharesSection = () => {
   const [visibleShares, setVisibleShares] = useState(6);
   const [filteredShares, setFilteredShares] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-
   useEffect(() => {
     const fetchShares = async () => {
       try {
@@ -76,9 +75,10 @@ const SharesSection = () => {
 
   if (loading) {
     return (
-      <div className="w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 flex justify-center items-center transition-colors duration-300"
-           style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="text-base sm:text-lg" style={{ color: 'var(--text-primary)' }}>
+      <div className={`w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 
+                    flex justify-center items-center transition-colors duration-300
+                    ${theme === "dark" ? "bg-gray-900" : "bg-gradient-to-b from-white to-white"}`}>
+        <div className={`text-base sm:text-lg ${theme === "dark" ? "text-gray-300" : "text-blue-600"}`}>
           Loading shares...
         </div>
       </div>
@@ -87,8 +87,9 @@ const SharesSection = () => {
 
   if (error) {
     return (
-      <div className="w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 flex justify-center items-center transition-colors duration-300"
-           style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className={`w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 
+                    flex justify-center items-center transition-colors duration-300
+                    ${theme === "dark" ? "bg-gray-900" : "bg-gradient-to-b from-white to-white"}`}>
         <div className="text-base sm:text-lg text-red-500">
           {error}
         </div>
@@ -97,16 +98,19 @@ const SharesSection = () => {
   }
 
   return (
-    <section className="w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 transition-colors duration-300"
-             style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <section className={`w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 
+                      transition-colors duration-300
+                      ${theme === "dark" ? "bg-gray-900" : "bg-gradient-to-b from-white-50 to-white"}`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4 transition-colors duration-300"
-              style={{ color: 'var(--text-primary)' }}>
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4 
+                       transition-colors duration-300
+                       ${theme === "dark" ? "text-white" : "text-blue-900"}`}>
             Featured Unlisted Shares
           </h2>
-          <p className="text-base sm:text-lg md:text-xl transition-colors duration-300"
-             style={{ color: 'var(--text-secondary)' }}>
+          <p className={`text-base sm:text-lg md:text-xl 
+                      transition-colors duration-300
+                      ${theme === "dark" ? "text-gray-400" : "text-blue-600"}`}>
             Discover high-potential unlisted companies
           </p>
         </div>
@@ -120,12 +124,13 @@ const SharesSection = () => {
           theme={theme}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredShares.slice(0, visibleShares).map((share) => (
             <div 
               key={share.id} 
               onClick={() => handleShareClick(share.name)}
-              className="cursor-pointer transform transition-transform duration-300 hover:scale-102"
+              className="cursor-pointer transform transition-all duration-300 
+                       hover:scale-[1.02] hover:shadow-lg group"
             >
               <ShareCard
                 name={share.name}
@@ -140,10 +145,14 @@ const SharesSection = () => {
         </div>
 
         {filteredShares.length > 6 && !searchQuery && (
-          <div className="mt-8 sm:mt-10 text-center">
+          <div className="mt-10 sm:mt-12 text-center">
             <button
-              className="btn-primary px-6 py-2 sm:px-8 sm:py-3 text-sm sm:text-base rounded-lg
-                        transition-all duration-300 hover:scale-105"
+              className={`px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base rounded-lg
+                       font-medium transition-all duration-300 
+                       transform hover:scale-105 hover:shadow-lg
+                       ${theme === "dark" 
+                         ? "bg-blue-600 text-white hover:bg-blue-500" 
+                         : "bg-blue-500 text-white hover:bg-blue-400"}`}
               onClick={toggleShares}
             >
               {visibleShares === filteredShares.length ? "View Less" : "View More"}
@@ -152,8 +161,9 @@ const SharesSection = () => {
         )}
 
         {filteredShares.length === 0 && (
-          <div className="text-center mt-8 sm:mt-10 text-base sm:text-lg transition-colors duration-300"
-               style={{ color: 'var(--text-secondary)' }}>
+          <div className={`text-center mt-8 sm:mt-10 text-base sm:text-lg 
+                        transition-colors duration-300
+                        ${theme === "dark" ? "text-gray-400" : "text-blue-600"}`}>
             No shares found matching your search.
           </div>
         )}

@@ -47,31 +47,31 @@ const BasePageLayout = ({
   `;
 
   return (
-    <div className={`min-h-screen w-full ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen w-full ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
       <style>{customStyles}</style>
       
       {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 overflow-hidden">
+      <section className="relative py-8 sm:py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-            <div className="text-center md:text-left space-y-4 md:space-y-6">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+            <div className="text-center md:text-left space-y-3 md:space-y-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                 {title}
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl opacity-90 max-w-2xl mx-auto md:mx-0">
+              <p className="text-lg sm:text-xl opacity-90 max-w-2xl mx-auto md:mx-0">
                 {subtitle}
               </p>
-              <div className="mt-6 md:mt-8">
+              <div className="mt-4 md:mt-6">
                 <Link 
                   to="/contact"
-                  className={`inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-lg
+                  className={`inline-flex items-center gap-2 px-6 py-3 text-base font-medium rounded-lg
                     transform transition-all hover:scale-105 hover:shadow-lg
                     ${theme === 'dark' 
                       ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                      : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'}`}
                 >
                   Start Investing
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
@@ -86,9 +86,9 @@ const BasePageLayout = ({
       {sections.map((Section, index) => (
         <section 
           key={index} 
-          className={`py-12 sm:py-14 md:py-16 px-4 sm:px-6 md:px-8 ${
+          className={`py-8 sm:py-12 px-4 sm:px-6 lg:px-8 ${
             index % 2 === 1 
-              ? (theme === 'dark' ? 'bg-gray-800/30' : 'bg-white/30') 
+              ? (theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50') 
               : ''
           }`}
         >
@@ -97,25 +97,25 @@ const BasePageLayout = ({
       ))}
 
       {/* CTA Section */}
-      <section className={`py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 ${theme === 'dark' ? 'bg-gray-800/30' : 'bg-white/30'}`}>
-        <div className="max-w-4xl mx-auto text-center space-y-4 md:space-y-6">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+      <section className={`py-8 sm:py-12 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+        <div className="max-w-4xl mx-auto text-center space-y-3 md:space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-bold">
             {ctaTitle}
           </h2>
-          <p className={`text-base sm:text-lg md:text-xl max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`text-base sm:text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
             {ctaDescription}
           </p>
-          <div className="mt-6 md:mt-8">
+          <div className="mt-4 md:mt-6">
             <Link 
               to="/contact"
-              className={`inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-lg
+              className={`inline-flex items-center gap-2 px-6 py-3 text-base font-medium rounded-lg
                 transform transition-all hover:scale-105 hover:shadow-lg
                 ${theme === 'dark' 
                   ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'}`}
             >
               Contact Us
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -123,12 +123,12 @@ const BasePageLayout = ({
 
       {/* Summary Section */}
       {summaryContent && (
-        <section className="py-12 sm:py-14 md:py-16 px-4 sm:px-6 md:px-8">
+        <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className={`p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border
+            <div className={`p-4 sm:p-6 rounded-xl border
               ${theme === 'dark' 
                 ? 'bg-gray-800/60 border-gray-700' 
-                : 'bg-white/60 border-gray-200'}`}
+                : 'bg-white border-gray-200 shadow-sm'}`}
             >
               {summaryContent}
             </div>

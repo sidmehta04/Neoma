@@ -1,4 +1,3 @@
-// Footer.js
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
@@ -11,35 +10,48 @@ const Footer = () => {
     <footer
       className={`${
         theme === "dark"
-          ? "rgba(11, 15, 23, 0.992) text-gray-300"
-          : "bg-gray-100 text-gray-600"
-      } py-8 sm:py-12 transition-colors duration-200`}
+          ? "bg-[rgb(11,15,23)] text-gray-300"
+          : "bg-gradient-to-b from-white to-blue-50 text-gray-600"
+      } py-12 sm:py-16 transition-all duration-300`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Company Info */}
-          <div className="col-span-1">
-            <div className="flex items-center mb-4">
+          <div className="col-span-1 space-y-6">
+            <div className="flex items-center">
               <span
-                className={`text-lg sm:text-xl ml-0 ${
-                  theme === "dark" ? "text-white" : "text-gray-900"
+                className={`text-2xl font-bold ${
+                  theme === "dark" ? "text-white" : "text-blue-900"
                 }`}
               >
                 NeomaCapital
               </span>
             </div>
-            <p className="text-xs sm:text-sm mb-6">
-              CIN (Corporate Identity Number) -U64990DL2025PTC440724
-            </p>
-            <p className="text-xs sm:text-sm mb-6">
-              ARN (Application Reference Number) -304426
-            </p>
-            <div className="flex space-x-4">
+            <div className="space-y-2">
+              <p
+                className={`text-sm ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                CIN (Corporate Identity Number) -U64990DL2025PTC440724
+              </p>
+              <p
+                className={`text-sm ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                ARN (Application Reference Number) -304426
+              </p>
+            </div>
+            <div className="flex space-x-4 pt-2">
               <a
                 href="https://www.linkedin.com/company/neoma-capital"
-                className={`transform transition-transform duration-200 hover:scale-110 ${
-                  theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
-                }`}
+                className={`transform transition-all duration-300 hover:scale-110 p-2 rounded-lg
+                  ${
+                    theme === "dark"
+                      ? "hover:bg-gray-800 text-gray-400 hover:text-blue-400"
+                      : "hover:bg-blue-100 text-gray-600 hover:text-blue-600"
+                  }`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -51,12 +63,14 @@ const Footer = () => {
                   <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
               </a>
-
               <a
                 href="https://www.instagram.com/neomacapital"
-                className={`transform transition-transform duration-200 hover:scale-110 ${
-                  theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
-                }`}
+                className={`transform transition-all duration-300 hover:scale-110 p-2 rounded-lg
+                  ${
+                    theme === "dark"
+                      ? "hover:bg-gray-800 text-gray-400 hover:text-pink-400"
+                      : "hover:bg-blue-100 text-gray-600 hover:text-pink-600"
+                  }`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -72,218 +86,160 @@ const Footer = () => {
           </div>
 
           {/* Offerings Links */}
-          <div>
+          <div className="space-y-4">
             <h3
-              className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
-                theme === "dark" ? "text-white" : "text-gray-900"
+              className={`text-lg font-bold ${
+                theme === "dark" ? "text-white" : "text-blue-900"
               }`}
             >
               Offerings
             </h3>
-            <ul className="space-y-2 text-sm sm:text-base">
-              <li>
-                <Link
-                  to="/mutual-funds"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  MutualFunds
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/get-started"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  Unlisted Shares
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/alternative"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  Alternative Investments
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/debt"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  Bonds
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/pre-ipo"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  Angle Investments
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/equity"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  PrivateBoutique{" "}
-                </Link>
-              </li>
+            <ul className="space-y-3">
+              {[
+                { path: "/mutual-funds", name: "MutualFunds" },
+                { path: "/get-started", name: "Unlisted Shares" },
+                { path: "/alternative", name: "Alternative Investments" },
+                { path: "/debt", name: "Bonds" },
+                { path: "/pre-ipo", name: "Angel Investments" },
+                { path: "/equity", name: "Private Boutique" },
+              ].map((item) => (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={`text-sm transition-all duration-300 hover:translate-x-1 inline-block
+                      ${
+                        theme === "dark"
+                          ? "text-gray-400 hover:text-white"
+                          : "text-gray-600 hover:text-blue-600"
+                      }`}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Resources Links */}
-          <div>
+          <div className="space-y-4">
             <h3
-              className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
-                theme === "dark" ? "text-white" : "text-gray-900"
+              className={`text-lg font-bold ${
+                theme === "dark" ? "text-white" : "text-blue-900"
               }`}
             >
               Resources
             </h3>
-            <ul className="space-y-2 text-sm sm:text-base">
-              <li>
-                <Link
-                  to="/blog"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  Blogs
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/FAQ"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/calculators"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  Calculators
-                </Link>
-              </li>
+            <ul className="space-y-3">
+              {[
+                { path: "/blog", name: "Blogs" },
+                { path: "/FAQ", name: "FAQs" },
+                { path: "/calculators", name: "Calculators" },
+              ].map((item) => (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={`text-sm transition-all duration-300 hover:translate-x-1 inline-block
+                      ${
+                        theme === "dark"
+                          ? "text-gray-400 hover:text-white"
+                          : "text-gray-600 hover:text-blue-600"
+                      }`}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact Information */}
-          <div>
+          <div className="space-y-4">
             <h3
-              className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
-                theme === "dark" ? "text-white" : "text-gray-900"
+              className={`text-lg font-bold ${
+                theme === "dark" ? "text-white" : "text-blue-900"
               }`}
             >
               Our Office
             </h3>
-            <address className="not-italic text-sm sm:text-base">
-              <p className="mb-4">2/16 FF RS Nehru Enclave New Delhi -110019</p>
-              <p className="mb-2">
+            <address className="not-italic space-y-3">
+              <p
+                className={`text-sm ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                2/16 FF RS Nehru Enclave New Delhi -110019
+              </p>
+              <div className="space-y-2">
                 <a
                   href="mailto:info@neomacapital.com"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
+                  className={`text-sm block transition-all duration-300 hover:translate-x-1
+                    ${
+                      theme === "dark"
+                        ? "text-gray-400 hover:text-white"
+                        : "text-gray-600 hover:text-blue-600"
+                    }`}
                 >
                   info@neomacapital.com
                 </a>
-              </p>
-              <p>
                 <a
-                  href="tel:+91 98102 55243"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark"
-                      ? "hover:text-white"
-                      : "hover:text-gray-900"
-                  }`}
+                  href="tel:+91 9220445243"
+                  className={`text-sm block transition-all duration-300 hover:translate-x-1
+                    ${
+                      theme === "dark"
+                        ? "text-gray-400 hover:text-white"
+                        : "text-gray-600 hover:text-blue-600"
+                    }`}
                 >
                   +91 9220445243
                 </a>
-              </p>
+              </div>
             </address>
           </div>
         </div>
 
         {/* Legal Links */}
         <div
-          className={`mt-8 sm:mt-12 pt-6 sm:pt-8 border-t ${
+          className={`mt-12 pt-8 border-t ${
             theme === "dark" ? "border-gray-800" : "border-gray-200"
           }`}
         >
-          <div className="flex justify-center items-center">
-            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8 text-sm sm:text-base">
-              <Link
-                to={RiskDeclaration}
-                className={`transition-colors duration-200 text-center ${
-                  theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
-                }`}
-              >
-                Privacy Policy
-              </Link>
-              <span className="hidden sm:inline text-gray-400">|</span>
-              <Link
-                to={RiskDeclaration}
-                className={`transition-colors duration-200 text-center ${
-                  theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
-                }`}
-              >
-                Terms of Use
-              </Link>
-              <span className="hidden sm:inline text-gray-400">|</span>
-              <Link
-                to={RiskDeclaration}
-                className={`transition-colors duration-200 text-center ${
-                  theme === "dark" ? "hover:text-white" : "hover:text-gray-900"
-                }`}
-              >
-                Declaration of Risks
-              </Link>
+          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-sm">
+              {[
+                { path: "/privacy", name: "Privacy Policy" },
+                { path: "/terms", name: "Terms of Use" },
+                { path: "/risks", name: "Declaration of Risks" },
+              ].map((item, index) => (
+                <React.Fragment key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={`transition-all duration-300 hover:translate-y-[-2px]
+                      ${
+                        theme === "dark"
+                          ? "text-gray-400 hover:text-white"
+                          : "text-gray-600 hover:text-blue-600"
+                      }`}
+                  >
+                    {item.name}
+                  </Link>
+                  {index < 2 && (
+                    <span
+                      className={
+                        theme === "dark" ? "text-gray-700" : "text-gray-300"
+                      }
+                    >
+                      |
+                    </span>
+                  )}
+                </React.Fragment>
+              ))}
             </div>
           </div>
         </div>
+
         {/* Risk Declaration */}
         <div
-          className={`mt-8 pt-6 border-t ${
+          className={`mt-8 pt-8 border-t ${
             theme === "dark" ? "border-gray-800" : "border-gray-200"
           }`}
         >

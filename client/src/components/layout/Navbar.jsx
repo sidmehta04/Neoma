@@ -18,13 +18,10 @@ import {
   Feather,
   DollarSignIcon,
   SearchCheck
-  
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import ThemeToggle from "../sections/ThemeToggle";
 import neomalogo from "../../assets/neomalogo2.svg";
-
-
 
 const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -33,7 +30,6 @@ const Navbar = () => {
   const dropdownRefs = useRef({});
   const navigate = useNavigate();
   const { theme } = useTheme();
-
 
   const offerings = [
     {
@@ -126,6 +122,7 @@ const Navbar = () => {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -154,14 +151,16 @@ const Navbar = () => {
       <button
         onClick={() => handleDropdownClick(dropdownName)}
         className={`flex items-center space-x-4.5 text-xl font-medium py-2 px-4 
-          rounded-lg transition-all duration-200 select-none
+          rounded-lg transition-all duration-200 select-none group
           ${
             theme === "dark"
               ? "text-gray-300 hover:text-white hover:bg-gray-800"
-              : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+              : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
           }`}
       >
-        <span>{dropdownName}</span>
+        <span className="transform transition-all duration-200 group-hover:translate-x-0.5">
+          {dropdownName}
+        </span>
         <ChevronDown
           className={`w-4 h-4 transition-transform duration-200 
             ${isActive ? "rotate-180" : ""}`}
@@ -192,7 +191,7 @@ const Navbar = () => {
           <div className="p-4">
             <h3
               className={`text-sm font-semibold mb-4 px-2
-              ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+              ${theme === "dark" ? "text-gray-300" : "text-blue-600"}`}
             >
               {dropdownName === "Offerings"
                 ? "Investment Options"
@@ -230,7 +229,7 @@ const Navbar = () => {
                             ${
                               theme === "dark"
                                 ? "text-gray-200 group-hover:text-white"
-                                : "text-gray-900 group-hover:text-blue-700"
+                                : "text-blue-600 group-hover:text-blue-700"
                             }`}
                           >
                             {item.name}
@@ -240,7 +239,7 @@ const Navbar = () => {
                             ${
                               theme === "dark"
                                 ? "text-gray-400 group-hover:text-gray-300"
-                                : "text-gray-500 group-hover:text-gray-600"
+                                : "text-gray-500 group-hover:text-blue-600"
                             }`}
                           >
                             {item.desc}
@@ -269,11 +268,11 @@ const Navbar = () => {
     <div
       className={`md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 
         transition-opacity duration-300
-        ${isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        ${isMobileMenuOpen ? "opacity-" : "opacity-0 pointer-events-none"}`}
       onClick={() => setIsMobileMenuOpen(false)}
     >
       <div
-        className={`fixed inset-y-0 right-0 max-w-xs w-full shadow-xl 
+        className={`fixed inset-y-0 right-0 max-w-s w-full shadow-xl 
           overflow-y-auto transform transition-transform duration-300 
           ease-in-out ${theme === "dark" ? "bg-gray-900" : "bg-white"}
           ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
@@ -281,7 +280,9 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <span
-            className={`text-lg font-semibold ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
+            className={`text-lg font-semibold ${
+              theme === "dark" ? "text-gray-100" : "text-blue-600"
+            }`}
           >
             Menu
           </span>
@@ -301,7 +302,7 @@ const Navbar = () => {
             <div key={title} className="space-y-1">
               <div
                 className={`px-2 text-sm font-medium uppercase tracking-wider
-                ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                ${theme === "dark" ? "text-gray-400" : "text-blue-600"}`}
               >
                 {title}
               </div>
@@ -312,23 +313,39 @@ const Navbar = () => {
                     onClick={() => handleItemClick(item.path)}
                     className={`block w-full text-left px-3 py-3 rounded-lg
                       transition-colors duration-150 group
-                      ${theme === "dark" ? "hover:bg-gray-800" : "hover:bg-gray-100"}`}
+                      ${
+                        theme === "dark"
+                          ? "hover:bg-gray-800"
+                          : "hover:bg-blue-50"
+                      }`}
                   >
                     <div className="flex items-start space-x-3">
                       <div
                         className={`mt-1 p-1.5 rounded-lg
-                        ${theme === "dark" ? "bg-gray-700 text-blue-400" : "bg-blue-100 text-blue-600"}`}
+                        ${
+                          theme === "dark"
+                            ? "bg-gray-700 text-blue-400"
+                            : "bg-blue-100 text-blue-600"
+                        }`}
                       >
                         <item.icon className="w-4 h-4" />
                       </div>
                       <div>
                         <div
-                          className={`font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-900"}`}
+                          className={`font-medium ${
+                            theme === "dark"
+                              ? "text-gray-200"
+                              : "text-blue-600"
+                          }`}
                         >
                           {item.name}
                         </div>
                         <div
-                          className={`text-sm mt-0.5 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                          className={`text-sm mt-0.5 ${
+                            theme === "dark"
+                              ? "text-gray-400"
+                              : "text-gray-500"
+                          }`}
                         >
                           {item.desc}
                         </div>
@@ -343,7 +360,7 @@ const Navbar = () => {
           <div className="space-y-1">
             <div
               className={`px-2 text-sm font-medium uppercase tracking-wider
-              ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+              ${theme === "dark" ? "text-gray-400" : "text-blue-600"}`}
             >
               Actions
             </div>
@@ -353,18 +370,28 @@ const Navbar = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center space-x-3 px-3 py-3 rounded-lg
                   transition-colors duration-150
-                  ${theme === "dark" ? "text-gray-200 hover:bg-gray-800" : "text-gray-900 hover:bg-gray-100"}`}
+                  ${
+                    theme === "dark"
+                      ? "text-gray-200 hover:bg-gray-800"
+                      : "text-blue-600 hover:bg-blue-50"
+                  }`}
               >
                 <div
                   className={`p-1.5 rounded-lg
-                  ${theme === "dark" ? "bg-gray-700 text-blue-400" : "bg-blue-100 text-blue-600"}`}
+                  ${
+                    theme === "dark"
+                      ? "bg-gray-700 text-blue-400"
+                      : "bg-blue-100 text-blue-600"
+                  }`}
                 >
                   <Settings className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-medium">Contact Us</div>
                   <div
-                    className={`text-sm mt-0.5 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                    className={`text-sm mt-0.5 ${
+                      theme === "dark" ? "text-gray-400" : "text-gray-500"
+                    }`}
                   >
                     Get in touch with our team
                   </div>
@@ -384,11 +411,10 @@ const Navbar = () => {
     </div>
   );
 
-
   return (
     <nav
       className={`sticky top-0 w-full px-8 py-3 flex justify-between 
-      items-center z-50 transition-colors duration-300 border-b
+      items-center z-40 transition-colors duration-300 border-b
       ${
         theme === "dark"
           ? "bg-[#0B0F17] border-gray-800"
@@ -405,11 +431,10 @@ const Navbar = () => {
           alt="Neoma Capital"
           className="block h-36 w-64 object-contain md:scale-95 scale-75"
           style={{
-            filter: theme === 'dark' ? 'invert(1)' : 'none'
+            filter: theme === 'dark' ? 'invert(1)' : 'brightness(2.2) contrast(1.2)'
           }}
         />
       </Link>
-
 
       <div className="hidden md:flex flex-1 justify-center items-center mr-20">
         <div className="flex items-center space-x-24">
@@ -422,7 +447,7 @@ const Navbar = () => {
               ${
                 theme === "dark"
                   ? "text-gray-300 hover:text-white hover:bg-gray-800"
-                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                  : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
               }`}
           >
             Contact Us

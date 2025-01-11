@@ -6,13 +6,13 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const Alert = ({ children, className }) => (
-  <div className={`p-4 rounded-md transition-colors duration-200 ${className}`}>
+  <div className={`p-4 rounded-lg border transition-all duration-200 ${className}`}>
     {children}
   </div>
 );
 
 const AlertDescription = ({ children }) => (
-  <div className="text-sm">{children}</div>
+  <div className="text-sm font-medium">{children}</div>
 );
 
 const ContactForm = () => {
@@ -46,7 +46,7 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/api/contact-form/submit`,
         formData,
         {
@@ -87,30 +87,35 @@ const ContactForm = () => {
   };
 
   const inputClasses = `
-    mt-1 block w-full rounded-md
-    transition-colors duration-200
-    bg-white border border-gray-200
-    text-gray-900
-    focus:ring-1 focus:ring-blue-500 focus:outline-none
-    py-2 sm:py-3 px-3 sm:px-4
+    mt-1 block w-full rounded-lg
+    transition-all duration-200
+    border focus:ring-2 focus:ring-offset-0 focus:outline-none
+    py-2.5 sm:py-3 px-4
     text-sm sm:text-base
-    placeholder:text-gray-400
-    ${isDark ? "dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 dark:placeholder:text-gray-500" : ""}
+    ${isDark 
+      ? "bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 focus:ring-blue-500/50" 
+      : "bg-white border-blue-100 text-gray-900 placeholder:text-gray-400 focus:ring-blue-100 focus:border-blue-200"}
   `;
 
-  const labelClasses = `block text-sm font-medium text-gray-700 mb-1 ${isDark ? "dark:text-gray-300" : ""}`;
+  const labelClasses = `block text-sm font-medium mb-1.5 ${
+    isDark ? "text-gray-300" : "text-blue-900"
+  }`;
 
   return (
-    <div className={`w-full mx-auto px-4 py-8 sm:py-12 lg:py-16 transition-colors duration-200 bg-white ${isDark ? "dark:bg-transparent" : ""}`}>
+    <div className={`w-full mx-auto px-4 py-8 sm:py-12 lg:py-16 transition-colors duration-200
+      ${isDark ? "bg-gray-900" : "bg-white"}`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 sm:mb-12">
-          <h1 className={`text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-gray-900 ${isDark ? "dark:text-white" : ""}`}>
+          <h1 className={`text-3xl sm:text-4xl font-bold mb-4 
+            ${isDark ? "text-white" : "text-blue-900"}`}>
             Contact Us
           </h1>
-          <p className={`text-sm sm:text-base text-gray-600 mb-2 ${isDark ? "dark:text-gray-400" : ""}`}>
+          <p className={`text-base sm:text-lg mb-2 
+            ${isDark ? "text-gray-300" : "text-gray-600"}`}>
             We'd be delighted to hear from you! At Neoma Capital, we're here to assist with any queries about financial services.
           </p>
-          <p className={`text-sm sm:text-base text-gray-600 ${isDark ? "dark:text-gray-400" : ""}`}>
+          <p className={`text-base sm:text-lg 
+            ${isDark ? "text-gray-300" : "text-gray-600"}`}>
             Reach out via phone, email, or the contact form displayed. Our dedicated team is ready to assist you in achieving your financial goals.
           </p>
         </div>
@@ -118,39 +123,64 @@ const ContactForm = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Information */}
           <div className="order-2 lg:order-1">
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-8">
               <div className="flex items-start space-x-4">
-                <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 mt-1 flex-shrink-0" />
+                <div className={`p-2 rounded-lg ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
+                  <MapPin className="w-6 h-6 text-blue-600" />
+                </div>
                 <div>
-                  <p className={`text-sm sm:text-base text-gray-600 ${isDark ? "dark:text-gray-400" : ""}`}>
+                  <h3 className={`text-sm font-medium mb-1
+                    ${isDark ? "text-gray-200" : "text-blue-900"}`}>
+                    Our Address
+                  </h3>
+                  <p className={`text-base leading-relaxed
+                    ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                     2/16 FF RS Nehru Enclave KalKaji D Block, New Delhi -110019
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4">
-                <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0" />
+              <div className="flex items-start space-x-4">
+                <div className={`p-2 rounded-lg ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
+                  <Phone className="w-6 h-6 text-blue-600" />
+                </div>
                 <div>
-                  <p className={`text-sm sm:text-base text-gray-600 ${isDark ? "dark:text-gray-400" : ""}`}>
+                  <h3 className={`text-sm font-medium mb-1
+                    ${isDark ? "text-gray-200" : "text-blue-900"}`}>
+                    Phone
+                  </h3>
+                  <p className={`text-base
+                    ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                     +919220445243
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4">
-                <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0" />
+              <div className="flex items-start space-x-4">
+                <div className={`p-2 rounded-lg ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
+                  <Mail className="w-6 h-6 text-blue-600" />
+                </div>
                 <div>
-                  <a href="mailto:info@neomacapital.com" className={`text-sm sm:text-base text-gray-600 ${isDark ? "dark:text-gray-400" : ""}`}>
+                  <h3 className={`text-sm font-medium mb-1
+                    ${isDark ? "text-gray-200" : "text-blue-900"}`}>
+                    Email
+                  </h3>
+                  <a 
+                    href="mailto:info@neomacapital.com" 
+                    className={`text-base hover:underline
+                      ${isDark ? "text-gray-400 hover:text-blue-400" : "text-gray-600 hover:text-blue-600"}`}
+                  >
                     info@neomacapital.com
                   </a>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 sm:mt-12">
+            <div className="mt-12">
               <iframe
-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3505.095656387876!2d77.25732719999999!3d28.545557499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s!2s!5e0!3m2!1sen!2sin!4v1673000000000!5m2!1sen!2sin"
-className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "dark:border-gray-700" : ""}`}
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3505.095656387876!2d77.25732719999999!3d28.545557499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s!2s!5e0!3m2!1sen!2sin!4v1673000000000!5m2!1sen!2sin"
+                className={`w-full h-64 sm:h-72 rounded-lg border transition-colors duration-200
+                  ${isDark ? "border-gray-700" : "border-blue-100"}`}
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
@@ -160,21 +190,26 @@ className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "da
           </div>
 
           {/* Contact Form */}
-          <div className={`order-1 lg:order-2 bg-white rounded-lg shadow-sm p-4 sm:p-6 ${isDark ? "dark:bg-gray-800" : ""}`}>
+          <div className={`order-1 lg:order-2 rounded-xl shadow-lg p-6 sm:p-8
+            ${isDark ? "bg-gray-800/50" : "bg-white border border-blue-100"}`}>
             {alert.show && (
               <Alert
-                className={`mb-4 sm:mb-6 ${
+                className={`mb-6 ${
                   alert.type === "error"
-                    ? `bg-red-50 text-red-800 ${isDark ? "dark:bg-red-900/50 dark:text-red-200" : ""}`
-                    : `bg-green-50 text-green-800 ${isDark ? "dark:bg-green-900/50 dark:text-green-200" : ""}`
+                    ? isDark 
+                      ? "bg-red-900/30 border-red-700/50 text-red-200" 
+                      : "bg-red-50 border-red-200 text-red-800"
+                    : isDark
+                      ? "bg-green-900/30 border-green-700/50 text-green-200" 
+                      : "bg-green-50 border-green-200 text-green-800"
                 }`}
               >
                 <AlertDescription>{alert.message}</AlertDescription>
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-              <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
                   <label htmlFor="name" className={labelClasses}>Name</label>
                   <input
@@ -185,6 +220,7 @@ className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "da
                     value={formData.name}
                     onChange={handleInputChange}
                     className={inputClasses}
+                    placeholder="Your name"
                   />
                 </div>
 
@@ -197,6 +233,7 @@ className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "da
                     value={formData.phone}
                     onChange={handleInputChange}
                     className={inputClasses}
+                    placeholder="Your phone number"
                   />
                 </div>
               </div>
@@ -211,6 +248,7 @@ className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "da
                   value={formData.email}
                   onChange={handleInputChange}
                   className={inputClasses}
+                  placeholder="Your email address"
                 />
               </div>
 
@@ -223,6 +261,7 @@ className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "da
                   value={formData.subject}
                   onChange={handleInputChange}
                   className={inputClasses}
+                  placeholder="Message subject"
                 />
               </div>
 
@@ -236,6 +275,7 @@ className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "da
                   value={formData.message}
                   onChange={handleInputChange}
                   className={inputClasses}
+                  placeholder="Your message"
                 />
               </div>
 
@@ -243,11 +283,12 @@ className={`w-full h-48 sm:h-64 rounded-lg border border-gray-200 ${isDark ? "da
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full sm:w-auto inline-flex justify-center rounded-md px-6 sm:px-8 py-2.5 sm:py-3
-                    bg-blue-600 text-sm font-medium text-white 
-                    transition-colors duration-200
-                    hover:bg-blue-700 focus:outline-none
-                    disabled:opacity-50 ${isDark ? "dark:hover:bg-blue-500" : ""}`}
+                  className={`w-full sm:w-auto px-8 py-3 rounded-lg text-base font-medium text-white
+                    transition-all duration-200 
+                    ${loading ? "opacity-50 cursor-not-allowed" : ""}
+                    ${isDark 
+                      ? "bg-blue-600 hover:bg-blue-500" 
+                      : "bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow"}`}
                 >
                   {loading ? "Sending..." : "Submit"}
                 </button>

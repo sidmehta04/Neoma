@@ -32,7 +32,7 @@ const ThemeToggle = ({ isMobileMenu }) => {
       <button
         onClick={toggleTheme}
         className={`flex items-start space-x-3 w-full text-left
-          ${theme === "dark" ? "text-gray-200" : "text-gray-900"}`}
+          ${theme === "dark" ? "text-gray-200" : "text-blue-700"}`}
       >
         <div className={`p-1.5 rounded-lg
           ${theme === "dark" ? "bg-gray-700 text-blue-400" : "bg-blue-100 text-blue-600"}`}
@@ -60,7 +60,7 @@ const ThemeToggle = ({ isMobileMenu }) => {
         transition-all duration-200 flex items-center space-x-2
         ${theme === "dark"
           ? "text-gray-300 hover:text-white hover:bg-gray-800"
-          : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+          : "text-blue-700 hover:text-blue-600 hover:bg-blue-50"
         }`}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
