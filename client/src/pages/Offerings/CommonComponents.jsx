@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../../components/ui/Card";
 import { Info, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Enhanced Rotating Highlights Component
