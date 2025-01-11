@@ -11,7 +11,7 @@ const Footer = () => {
     <footer
       className={`${
         theme === "dark"
-          ? "bg-gray-900 text-gray-300"
+          ? "rgba(11, 15, 23, 0.992) text-gray-300"
           : "bg-gray-100 text-gray-600"
       } py-8 sm:py-12 transition-colors duration-200`}
     >

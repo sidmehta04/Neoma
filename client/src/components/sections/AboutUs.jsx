@@ -1,187 +1,145 @@
 import React from 'react';
-import { motion, AnimatePresence } from "framer-motion";
-import { Moon, TrendingUp, Shield, Target } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { Link } from 'react-router-dom';
+import AboutImage1 from '../../assets/Image.webp';
 
-// Animations configuration
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
-};
-
-const AnimatedPointer = () => {
+const AboutImage = () => {
   const { theme } = useTheme();
   
   return (
-    <div className="w-8 h-8 sm:w-12 sm:h-12 absolute -top-4 sm:-top-6 left-1/2 transform -translate-x-1/2">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <path 
-          d="M20 80 L50 20 L80 80 L50 60 Z" 
-          fill="none" 
-          stroke={theme === 'dark' ? '#60A5FA' : '#3B82F6'}
-          strokeWidth="4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+    <div className="relative w-full h-full flex items-center justify-center">
+      {/* Refined grid background */}
+      <div className="absolute inset-0 z-0 transition-transform duration-300">
+        <svg
+          className="w-full h-full"
+          width="100%"
+          height="100%"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <animate 
-            attributeName="stroke-dasharray" 
-            from="0,1000" 
-            to="300,1000" 
-            dur="2s" 
-            repeatCount="indefinite" 
-          />
-          <animate 
-            attributeName="stroke-dashoffset" 
-            from="1000" 
-            to="0" 
-            dur="2s" 
-            repeatCount="indefinite" 
-          />
-        </path>
-        <circle 
-          cx="50" 
-          cy="20" 
-          r="4" 
-          fill={theme === 'dark' ? '#60A5FA' : '#3B82F6'}
-        >
-          <animate 
-            attributeName="r" 
-            values="4;6;4" 
-            dur="1s" 
-            repeatCount="indefinite" 
-          />
-        </circle>
-      </svg>
+          <defs>
+            <pattern
+              id="smallGrid"
+              width="20"
+              height="20"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 20 0 L 0 0 0 20"
+                fill="none"
+                stroke={theme === 'dark' ? '#2C3340' : '#F0F1F3'}
+                strokeWidth="0.5"
+              />
+            </pattern>
+            <pattern
+              id="grid"
+              width="100"
+              height="100"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect width="100" height="100" fill="url(#smallGrid)" />
+              <path
+                d="M 100 0 L 0 0 0 100"
+                fill="none"
+                stroke={theme === 'dark' ? '#374151' : '#E5E7EB'}
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <g transform="translate(-400, -400) rotate(0)"> {/* Controls: translate(x, y) rotate(degrees) */}
+            <rect width="150%" height="150%" fill={theme === 'dark' ? 'rgb(11,15,23)' : '#FFFFFF'} />
+            <rect width="150%" height="150%" fill="url(#grid)" />
+                  </g>
+        </svg>
+      </div>
+      
+      {/* Image container with backdrop blur */}
+      <div className="relative z-10 w-full max-w-lg mx-auto p-6">
+        <div className={`absolute inset-0 ${
+          theme === 'dark' ? 'bg-gray-900/10' : 'bg-white/10'
+        }`} />
+        <img 
+          src={AboutImage1}
+          alt="Neoma Capital" 
+          className="relative z-20 w-full h-auto rounded-xl shadow-lg object-cover"
+        />
+      </div>
     </div>
   );
 };
 
-const FeatureCard = ({ icon: Icon, title, description }) => {
-  const { theme } = useTheme();
-  
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        {...fadeInUp}
-        className={`relative p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-        }`}
-      >
-        <div className={`absolute -top-4 left-4 sm:left-6 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transform -rotate-6 ${
-          theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500'
-        }`}>
-          <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-        </div>
-        <h4 className={`text-lg sm:text-xl font-semibold mt-4 mb-2 ${
-          theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
-        }`}>
-          {title}
-        </h4>
-        <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-          {description}
-        </p>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
-
+// Rest of the component remains the same...
 const AboutSection = () => {
   const { theme } = useTheme();
 
-  const features = [
-    {
-      icon: Moon,
-      title: "New Beginnings",
-      description: "Embodying the spirit of the new moon, we represent fresh opportunities and innovative approaches to wealth creation."
-    },
-    {
-      icon: TrendingUp,
-      title: "Strategic Growth",
-      description: "Our seasoned professionals craft tailored investment solutions to meet your unique financial objectives."
-    },
-    {
-      icon: Shield,
-      title: "Trust & Integrity",
-      description: "We prioritize transparency and ethical practices in every client interaction and investment decision."
-    },
-    {
-      icon: Target,
-      title: "Focused Approach",
-      description: "Navigate the complexities of financial markets with our targeted and results-driven strategies."
-    }
-  ];
-
   return (
-    <AnimatePresence mode="wait">
-      <section className={`relative py-12 sm:py-16 md:py-20 overflow-hidden ${
-        theme === 'dark'
-          ? 'bg-gradient-to-b from-gray-900 to-gray-950'
-          : 'bg-gradient-to-b from-gray-50 to-white'
-      }`}>
-        <div className={`absolute inset-0 bg-[url('')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] ${
-          theme === 'dark' ? 'opacity-20' : 'opacity-30'
-        }`}></div>
-        
-        <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative">
-          <motion.div 
-            {...fadeInUp}
-            className="text-center mb-10 sm:mb-16"
-          >
-            <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r bg-clip-text text-transparent ${
-              theme === 'dark'
-                ? 'from-blue-400 to-purple-400'
-                : 'from-blue-600 to-purple-600'
-            }`}>
-              About Us
-            </h2>
-            <p className={`text-base sm:text-lg md:text-xl max-w-3xl mx-auto ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              Welcome to Neoma Capital, where we guide you through the ever-evolving landscape of financial investments.
-            </p>
-            <AnimatedPointer />
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-16">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} />
-            ))}
+    <section className={`relative min-h-screen py-8 sm:py-12 md:py-16 overflow-hidden ${
+      theme === 'dark'
+        ? 'bg-[rgb(11,15,23)]'
+        : 'bg-gradient-to-b from-gray-50 to-white'
+    }`}>
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Image - Shown on top for mobile, left side for desktop */}
+          <div className="order-1 lg:order-none h-[300px] sm:h-[400px] lg:h-[600px]">
+            <AboutImage />
           </div>
 
-          <motion.div
-            {...fadeInUp}
-            className={`p-6 sm:p-8 rounded-xl sm:rounded-2xl backdrop-blur-sm ${
-              theme === 'dark' ? 'bg-gray-800/50' : 'bg-blue-50'
-            }`}
-          >
-            <div className="space-y-4 sm:space-y-6 flex flex-col items-center text-center">
-              <h3 className={`text-2xl sm:text-3xl font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+          {/* Content section remains unchanged */}
+          <div className="order-2 lg:order-none space-y-6 sm:space-y-8">
+            <div className="prose prose-sm sm:prose lg:prose-lg max-w-none">
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r bg-clip-text text-transparent ${
+                theme === 'dark'
+                  ? 'from-blue-400 to-purple-400'
+                  : 'from-blue-600 to-purple-600'
               }`}>
-                Join Our Journey
-              </h3>
-              <p className={`text-sm sm:text-base leading-relaxed max-w-2xl ${
+                About Us
+              </h2>
+              
+              <div className={`space-y-4 sm:space-y-6 ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
               }`}>
-                As we navigate the complexities of the financial world together, we remain committed to fostering long-term relationships built on trust and mutual success. Together, we can illuminate your path to financial success.
-              </p>
-              <Link 
-                to="/contact"
-                className={`inline-block px-6 py-3 text-white text-sm sm:text-base rounded-lg transition-all duration-300 hover:scale-105 ${
-                  theme === 'dark'
-                    ? 'bg-blue-500 hover:bg-blue-600'
-                    : 'bg-blue-600 hover:bg-blue-700'
-                }`}
-              >
-                Get Started
-              </Link>
+                <p className="text-base sm:text-lg leading-relaxed">
+                  Welcome to Neoma Capital, where we embody the spirit of the "new moon"—a symbol of new beginnings and fresh opportunities. At Neoma Capital, we are dedicated to guiding our clients through the ever-evolving landscape of financial investments, providing innovative solutions tailored to meet diverse financial goals.
+                </p>
+                
+                <p className="text-base sm:text-lg leading-relaxed">
+                  Our team comprises seasoned professionals with extensive industry knowledge and a passion for helping clients achieve their financial aspirations. We prioritize transparency, integrity, and personalized service in every interaction, ensuring that our clients feel confident in their investment decisions.
+                </p>
+                
+                <p className="text-base sm:text-lg leading-relaxed">
+                  As we navigate the complexities of the financial world together, we remain committed to fostering long-term relationships built on trust and mutual success. Join us at Neoma Capital as we embark on this journey towards growth and prosperity—together, we can illuminate your path to financial success.
+                </p>
+              </div>
+
+              <div className={`mt-6 sm:mt-8 p-4 sm:p-6 rounded-xl ${
+                theme === 'dark' ? 'bg-gray-800/50' : 'bg-blue-50'
+              }`}>
+                <h3 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Join Our Journey
+                </h3>
+                <p className={`mb-4 sm:mb-6 text-base sm:text-lg leading-relaxed ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}>
+                  Join us at Neoma Capital as we embark on this journey towards growth and prosperity—together, we can illuminate your path to financial success.
+                </p>
+                <Link 
+                  to="/contact"
+                  className={`inline-block px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-white rounded-lg transition-all duration-300 hover:scale-105 ${
+                    theme === 'dark'
+                      ? 'bg-blue-500 hover:bg-blue-600'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  Get Started
+                </Link>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </section>
-    </AnimatePresence>
+      </div>
+    </section>
   );
 };
 
