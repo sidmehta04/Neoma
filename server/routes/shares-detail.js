@@ -1,4 +1,3 @@
-// server/routes/shares.js
 const express = require('express');
 const router = express.Router();
 
@@ -12,12 +11,13 @@ module.exports = (supabase) => {
       const { data: companies, error: companyError } = await supabase
         .from("companies")
         .select(`
-          id, name, symbol, sector, face_value,
+          id, name, symbol, sector, face_value, about,
           cin, registered_office, incorporation_date,
           board_members:board_members (id, name, position, category),
           company_subsidiaries:company_subsidiaries (id, name, relationship_type, ownership_percentage),
           shareholding_pattern:shareholding_pattern (id, category, shares, percentage, as_of_date),
-          stock_prices:stock_prices (id, price, change_percentage, trade_date, volume, marketcap, pe_ratio, book_valur)
+          stock_prices:stock_prices (id, price, change_percentage, trade_date, volume, marketcap, pe_ratio, book_valur),
+          company_highlights:company_highlights (id, highlight)
         `)
         .eq("name", decodeURIComponent(shareName))
         .order('id', { ascending: true });
