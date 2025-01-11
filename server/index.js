@@ -120,6 +120,7 @@ const contactRoutes = require('./routes/contact')(supabase);
 const sharesRoutes = require('./routes/shares')(supabase);
 const contactFormRoutes = require('./routes/contact-form')(supabase);
 const shareDetailRoutes = require('./routes/shares-detail')(supabase);
+const companiesRoutes = require('./routes/companies')(supabase);
 
 
 // Add logging middleware for routes
@@ -127,7 +128,10 @@ app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
-
+app.use('/api/companies', (req, res, next) => {
+  console.log('Companies route hit:', req.path);
+  next();
+}, companiesRoutes);
 // Mount routes
 app.use('/api/blog-posts', (req, res, next) => {
   console.log('Blog route hit:', req.path);

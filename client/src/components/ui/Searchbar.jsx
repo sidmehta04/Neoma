@@ -3,6 +3,10 @@ import { Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/superbase';
 import { useTheme } from '../../context/ThemeContext';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL|| import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
+
 
 const SearchBar = ({ 
   className = '', 
@@ -20,60 +24,50 @@ const SearchBar = ({
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const searchRef = useRef(null);
-
   useEffect(() => {
+    const controller = new AbortController();
+    
     const handleSearch = async () => {
       if (!searchQuery.trim()) {
         setSearchResults([]);
         return;
       }
-
+    
       setIsLoading(true);
       setError(null);
-
+    
       try {
-        const { data, error: searchError } = await supabase
-          .from('companies')
-          .select(`
-            id,
-            name,
-            symbol,
-            sector,
-            stock_prices (
-              price,
-              change_percentage,
-              trade_date
-            )
-          `)
-          .or(`name.ilike.%${searchQuery}%,symbol.ilike.%${searchQuery}%`)
-          .order('name', { ascending: true })
-          .limit(5);
-
-        if (searchError) throw searchError;
-
-        if (data) {
-          const processedResults = data.map(company => ({
-            id: company.id,
-            name: company.name,
-            symbol: company.symbol,
-            sector: company.sector,
-            price: company.stock_prices?.[0]?.price ?? 'N/A',
-            change: company.stock_prices?.[0]?.change_percentage ?? 0,
-          }));
-          setSearchResults(processedResults);
-        }
+        const { data } = await axios.get(`${API_URL}/api/companies/search`, {
+          params: {
+            q: searchQuery,
+            limit: 5
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          signal: controller.signal
+        });
+    
+        setSearchResults(data.results);
       } catch (err) {
-        console.error('Search error:', err);
-        setError('Failed to fetch search results');
+        if (axios.isCancel(err)) {
+          console.log('Request canceled');
+        } else {
+          console.error('Search error:', err);
+          setError(err.response?.data?.error || 'Failed to fetch search results');
+        }
       } finally {
         setIsLoading(false);
       }
     };
-
+  
     const timeoutId = setTimeout(handleSearch, 300);
-    return () => clearTimeout(timeoutId);
+    
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
   }, [searchQuery]);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
