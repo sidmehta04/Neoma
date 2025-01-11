@@ -1,17 +1,14 @@
 import React, { useState, useEffect, Suspense, lazy, memo } from "react";
 import { useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
-import { supabase } from "../lib/superbase";
 import {
   TrendingUp,
   TrendingDown,
   PieChart,
   Info,
   Share2,
-  Building,
   Users,
-  ArrowUpRight,
-  ArrowDownRight,
+
   Calendar,
 } from "lucide-react";
 import SearchBar from "../components/ui/Searchbar";
@@ -23,13 +20,25 @@ import {
 } from "../components/ui/dropdown-menu";
 import { styles } from "../Styles/shareDetailStyles";
 import { formatters } from "../Styles/shareDetailUtils";
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL||import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_URL2 ||
+  "http://localhost:5001";
 
 // Lazy load the financials tab
 const FinancialsTab = lazy(() => import("../components/ui/Financials"));
-
+const ManagementTab = lazy(
+  () => import("../pages/SharedDetailComponents/Management")
+);
+const LoadingSkeletonCard = lazy(
+  () => import("../pages/SharedDetailComponents/Skeleton")
+);
+const MetricCard = lazy(() => import("../pages/SharedDetailComponents/Metric"));
+const OverviewTab = lazy(
+  () => import("../pages/SharedDetailComponents/Overview")
+);
 // Constants
 const TABS = [
   { id: "overview", label: "Overview", icon: Info },
@@ -56,238 +65,7 @@ const SHARE_OPTIONS = [
   },
 ];
 
-const COMPANY_INFO_FIELDS = [
-  { id: "cin", label: "CIN", className: "break-all" },
-  { id: "registered_office", label: "Registered Office" },
-  { id: "incorporation_date", label: "Incorporation Date" },
-];
 
-// Loading Skeleton Components
-const LoadingSkeletonCard = memo(({ theme }) => (
-  <div className="animate-pulse space-y-4">
-    <div
-      className={`h-10 ${
-        theme === "light" ? "bg-gray-200" : "bg-gray-700"
-      } rounded w-3/4`}
-    ></div>
-    <div
-      className={`h-8 ${
-        theme === "light" ? "bg-gray-200" : "bg-gray-700"
-      } rounded w-1/2`}
-    ></div>
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      {[...Array(4)].map((_, i) => (
-        <div
-          key={i}
-          className={`h-20 ${
-            theme === "light" ? "bg-gray-200" : "bg-gray-700"
-          } rounded`}
-        ></div>
-      ))}
-    </div>
-  </div>
-));
-
-// MetricCard Component
-const MetricCard = memo(({ title, value, prefix = "₹", change, theme }) => (
-  <div
-    className={`${styles.metricCard[theme]} p-2 sm:p-3 lg:p-4 rounded-lg transition-all duration-300`}
-  >
-    <p
-      className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base`}
-    >
-      {title}
-    </p>
-    <div className="flex items-end justify-between">
-      <p
-        className={`text-base sm:text-lg lg:text-xl font-bold ${styles.text.primary[theme]}`}
-      >
-        {title === "Market Cap" ? value : `${prefix}${value}`}
-      </p>
-      {change !== undefined && (
-        <div
-          className={`flex items-center ${
-            parseFloat(change) >= 0 ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          {parseFloat(change) >= 0 ? (
-            <ArrowUpRight size={12} />
-          ) : (
-            <ArrowDownRight size={12} />
-          )}
-          <span className="text-xs sm:text-sm font-semibold">
-            {formatters.formatPercentage(change)}
-          </span>
-        </div>
-      )}
-    </div>
-  </div>
-));
-
-// About Card Component
-const AboutCard = memo(({ companyData, theme }) => (
-  <div className={`${styles.infoCard[theme]} rounded-xl p-3 sm:p-4 lg:p-6 col-span-1 sm:col-span-2`}>
-    <h2 className={`text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 flex items-center ${styles.text.primary[theme]}`}>
-      <Info className={`mr-2 w-4 sm:w-5 lg:w-6 ${theme === "light" ? "text-blue-600" : "text-white"}`} />
-      About Company
-    </h2>
-    <div className="space-y-4">
-      {/* About Text */}
-      <div className={`${styles.text.secondary[theme]} text-sm sm:text-base whitespace-pre-line`}>
-        {companyData.about || "Information not available."}
-      </div>
-
-      {/* Company Highlights */}
-      {companyData.company_highlights && companyData.company_highlights.length > 0 && (
-        <div className="mt-6">
-          <h3 className={`text-sm sm:text-base lg:text-lg font-semibold mb-3 ${styles.text.primary[theme]}`}>
-            Key Highlights
-          </h3>
-          <div className="grid grid-cols-1 gap-2">
-            {companyData.company_highlights.map((highlight, index) => (
-              <div 
-                key={highlight.id || index} 
-                className={`${styles.memberCard[theme]} p-3 rounded-lg flex items-start gap-3`}
-              >
-                <span className={`${styles.text.secondary[theme]} text-sm sm:text-base mt-1`}>•</span>
-                <p className={`${styles.text.secondary[theme]} text-sm sm:text-base flex-1`}>
-                  {highlight.highlight}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  </div>
-));
-
-// Overview Tab Component
-const OverviewTab = memo(({ companyData, theme }) => (
-  <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-    {/* About Section */}
-    <AboutCard companyData={companyData} theme={theme} />
-
-    {/* Company Details Grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-      {/* Company Information Card */}
-      <div className={`${styles.infoCard[theme]} rounded-xl p-3 sm:p-4 lg:p-6`}>
-        <h2 className={`text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 flex items-center ${styles.text.primary[theme]}`}>
-          <Building className={`mr-2 w-4 sm:w-5 lg:w-6 ${theme === "light" ? "text-blue-600" : "text-white"}`} />
-          Company Information
-        </h2>
-        <div className="space-y-3 sm:space-y-4">
-          {COMPANY_INFO_FIELDS.map(({ id, label, className = "" }) => (
-            <div key={id}>
-              <p className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base`}>
-                {label}
-              </p>
-              <p className={`${styles.text.primary[theme]} text-xs sm:text-sm lg:text-base ${className}`}>
-                {id === "incorporation_date"
-                  ? formatters.formatDate(companyData[id])
-                  : companyData[id]}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Shareholding Pattern Card */}
-      <div className={`${styles.infoCard[theme]} rounded-xl p-3 sm:p-4 lg:p-6`}>
-        <h2 className={`text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 flex items-center ${styles.text.primary[theme]}`}>
-          <Users className={`mr-2 w-4 sm:w-5 lg:w-6 ${theme === "light" ? "text-blue-600" : "text-white"}`} />
-          Shareholding Pattern
-        </h2>
-        <div className="space-y-2 sm:space-y-3 lg:space-y-4">
-          {companyData.shareholding_pattern.map((item) => (
-            <div key={item.id} className="flex justify-between items-center">
-              <span className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base`}>
-                {item.category}
-              </span>
-              <span className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base font-medium`}>
-                {formatters.formatPercentage(item.percentage)}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-));
-
-// Management Tab Component
-const ManagementTab = memo(({ companyData, theme }) => (
-  <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-    {/* Board of Directors */}
-    <div className={`${styles.infoCard[theme]} rounded-xl p-3 sm:p-4 lg:p-6`}>
-      <h2
-        className={`text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 lg:mb-6 ${styles.text.primary[theme]}`}
-      >
-        Board of Directors
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-        {companyData.board_members.map((member) => (
-          <div
-            key={member.id}
-            className={`${styles.memberCard[theme]} p-2 sm:p-3 lg:p-4 rounded-lg`}
-          >
-            <p
-              className={`${styles.text.primary[theme]} text-sm sm:text-base lg:text-lg font-medium`}
-            >
-              {member.name}
-            </p>
-            <p
-              className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base mt-1`}
-            >
-              {member.position}
-            </p>
-            <p
-              className={`${styles.text.tertiary[theme]} text-xs sm:text-sm mt-1`}
-            >
-              {member.category}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Subsidiaries Section */}
-    {companyData.company_subsidiaries.length > 0 && (
-      <div className={`${styles.infoCard[theme]} rounded-xl p-3 sm:p-4 lg:p-6`}>
-        <h2
-          className={`text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 lg:mb-6 ${styles.text.primary[theme]}`}
-        >
-          Subsidiaries & Associates
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-          {companyData.company_subsidiaries.map((subsidiary) => (
-            <div
-              key={subsidiary.id}
-              className={`${styles.memberCard[theme]} p-2 sm:p-3 lg:p-4 rounded-lg`}
-            >
-              <p
-                className={`${styles.text.primary[theme]} text-sm sm:text-base lg:text-lg font-medium`}
-              >
-                {subsidiary.name}
-              </p>
-              <p
-                className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base mt-1`}
-              >
-                {subsidiary.relationship_type}
-              </p>
-              <p
-                className={`${styles.text.tertiary[theme]} text-xs sm:text-sm mt-1`}
-              >
-                {formatters.formatPercentage(subsidiary.ownership_percentage)}{" "}
-                Ownership
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-  </div>
-));
 
 // Main ShareDetail Component
 const ShareDetail = () => {
@@ -445,7 +223,8 @@ const ShareDetail = () => {
                 </span>
               </div>
               <p className={`text-xs mt-1 ${styles.text.secondary[theme]}`}>
-                *Price hidden for regulatory purpose please contact us directly for best price
+                *Price hidden for regulatory purpose please contact us directly
+                for best price
               </p>
             </div>
           </div>
@@ -472,7 +251,7 @@ const ShareDetail = () => {
                 <span
                   className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base`}
                 >
-                  Last Updated The Finances on 
+                  Last Updated The Finances on
                 </span>
                 <span
                   className={`${styles.text.primary[theme]} text-xs sm:text-sm lg:text-base font-medium`}
