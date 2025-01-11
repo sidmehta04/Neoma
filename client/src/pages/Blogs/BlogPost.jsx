@@ -162,7 +162,7 @@ const BlogPost = () => {
   }
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-rgb(11, 15, 23)' : 'bg-white'}`}>
       <div className="container mx-auto px-4 py-3 sm:py-4">
         <button
           onClick={() => navigate('/blog')}

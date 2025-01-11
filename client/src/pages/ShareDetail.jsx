@@ -323,7 +323,7 @@ const ShareDetail = () => {
           >
             <div className="flex-1">
               <SearchBar
-                className="w-full"
+                className="w-full "
                 placeholder="Search other companies..."
                 theme={theme}
               />

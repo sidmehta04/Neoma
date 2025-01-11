@@ -238,7 +238,7 @@ const FAQSection = () => {
   return (
     <section className={`relative min-h-screen py-8 sm:py-12 md:py-20 ${
       theme === 'dark'
-        ? 'bg-gradient-to-b from-gray-900 to-gray-800'
+        ? 'bg-gradient-to-b from-rgb(11, 15, 23) to-rgb(11, 15, 23)'
         : 'bg-gradient-to-b from-gray-50 to-white'
     }`}>
       <BackgroundPattern />

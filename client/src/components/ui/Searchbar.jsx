@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/superbase';
-import { useTheme } from '../../context/ThemeContext';
 import axios from 'axios';
+import { useTheme } from '../../context/ThemeContext';
 
-const API_URL = import.meta.env.VITE_API_URL|| import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
-
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
 
 const SearchBar = ({ 
   className = '', 
@@ -14,7 +12,8 @@ const SearchBar = ({
   showResults = true,
   placeholder = "Search companies...",
   onClose,
-  onResultSelect 
+  onResultSelect,
+  maxHeight = "400px"
 }) => {
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,7 +22,10 @@ const SearchBar = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const searchRef = useRef(null);
+  const containerRef = useRef(null);
+  const resultsRef = useRef(null);
+
+  // Handle search
   useEffect(() => {
     const controller = new AbortController();
     
@@ -40,7 +42,7 @@ const SearchBar = ({
         const { data } = await axios.get(`${API_URL}/api/companies/search`, {
           params: {
             q: searchQuery,
-            limit: 5
+            limit: 10
           },
           headers: {
             'Content-Type': 'application/json'
@@ -48,11 +50,9 @@ const SearchBar = ({
           signal: controller.signal
         });
     
-        setSearchResults(data.results);
+        setSearchResults(data.results || []);
       } catch (err) {
-        if (axios.isCancel(err)) {
-          console.log('Request canceled');
-        } else {
+        if (!axios.isCancel(err)) {
           console.error('Search error:', err);
           setError(err.response?.data?.error || 'Failed to fetch search results');
         }
@@ -68,9 +68,11 @@ const SearchBar = ({
       clearTimeout(timeoutId);
     };
   }, [searchQuery]);
+
+  // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
         setIsSearchOpen(false);
       }
     };
@@ -90,10 +92,8 @@ const SearchBar = ({
 
   const handleResultClick = (result) => {
     if (onResultSelect) {
-      // If onResultSelect prop is provided, use it
       onResultSelect(result);
     } else {
-      // Default behavior - navigate to share details
       navigate(`/shares/${encodeURIComponent(result.name)}`);
     }
     handleClear();
@@ -110,17 +110,21 @@ const SearchBar = ({
   };
 
   const themeStyles = {
-    input: {
-      light: "bg-white/80 border-gray-200 text-gray-900 focus:bg-white",
-      dark: "bg-gray-800/50 border-gray-700 text-white focus:bg-gray-800"
+    container: {
+      light: "bg-white/80 backdrop-blur-lg shadow-lg",
+      dark: "bg-gray-800 shadow-lg"
     },
-    dropdown: {
-      light: "bg-white border-gray-200 shadow-lg",
-      dark: "bg-gray-800 border-gray-700 shadow-lg"
+    input: {
+      light: "bg-white/80 backdrop-blur-lg text-gray-900 focus:bg-white",
+      dark: "bg-gray-800/50 text-white focus:bg-gray-800"
+    },
+    results: {
+      light: "bg-white/80 backdrop-blur-lg border-t border-gray-200",
+      dark: "bg-gray-800 border-t border-gray-700"
     },
     resultItem: {
       light: "hover:bg-gray-50 border-gray-200",
-      dark: "hover:bg-gray-700 border-gray-700"
+      dark: "hover:bg-gray-700/50 border-gray-700"
     },
     text: {
       primary: {
@@ -139,89 +143,102 @@ const SearchBar = ({
   };
 
   return (
-    <div className={`relative z-[40] ${className}`} ref={searchRef}>
-      <div className="relative">
-        <input
-          type="text"
-          placeholder={placeholder}
-          className={`w-full px-12 py-3 rounded-lg transition-all duration-300
-            focus:outline-none focus:ring-2 focus:ring-blue-500
-            ${themeStyles.input[theme]}`}
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setIsSearchOpen(true);
-            if (onSearch) onSearch(e.target.value);
-          }}
-          onFocus={() => setIsSearchOpen(true)}
-        />
-        <Search 
-          className={`absolute left-4 top-1/2 -translate-y-1/2 ${themeStyles.text.secondary[theme]}`} 
-          size={20} 
-        />
-        {searchQuery && (
-          <button
-            onClick={handleClear}
-            className={`absolute right-4 top-1/2 -translate-y-1/2 
-              ${themeStyles.text.secondary[theme]} 
-              hover:text-gray-900 dark:hover:text-gray-300 
-              transition-colors duration-200`}
-          >
-            <X size={20} />
-          </button>
-        )}
+    <div 
+      ref={containerRef}
+      className={`relative z-999 ${className}`}
+    >
+      <div className={`rounded-t-lg transition-all duration-300 ${themeStyles.container[theme]} 
+        ${isSearchOpen && searchResults.length ? 'rounded-b-none' : 'rounded-lg'}`}
+      >
+        <div className="relative">
+          <input
+            type="text"
+            placeholder={placeholder}
+            className={`w-full px-12 py-3 rounded-lg transition-all duration-300
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              ${themeStyles.input[theme]}`}
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setIsSearchOpen(true);
+              if (onSearch) onSearch(e.target.value);
+            }}
+            onFocus={() => setIsSearchOpen(true)}
+          />
+          <Search 
+            className={`absolute left-4 top-1/2 -translate-y-1/2 ${themeStyles.text.secondary[theme]}`} 
+            size={20} 
+          />
+          {searchQuery && (
+            <button
+              onClick={handleClear}
+              className={`absolute right-4 top-1/2 -translate-y-1/2 
+                ${themeStyles.text.secondary[theme]} 
+                hover:text-gray-900 dark:hover:text-gray-300 
+                transition-colors duration-200`}
+            >
+              <X size={20} />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Search Results Dropdown */}
+      {/* Results dropdown */}
       {showResults && isSearchOpen && (searchResults.length > 0 || isLoading || error) && (
-        <div className={`absolute z-[50] w-full mt-2 rounded-lg border transition-all duration-300
-  ${themeStyles.dropdown[theme]} shadow-2xl`}>
-          {isLoading && (
-            <div className={`p-4 ${themeStyles.text.secondary[theme]}`}>
-              Searching...
-            </div>
-          )}
+        <div 
+          ref={resultsRef}
+          className={`absolute left-0 right-0 overflow-hidden rounded-b-lg shadow-xl
+            ${themeStyles.container[theme]} ${themeStyles.results[theme]}`}
+          style={{ maxHeight }}
+        >
+          <div className="overflow-y-auto" style={{ maxHeight }}>
+            {isLoading && (
+              <div className={`p-4 ${themeStyles.text.secondary[theme]}`}>
+                Searching...
+              </div>
+            )}
 
-          {error && (
-            <div className="p-4 text-red-500">
-              {error}
-            </div>
-          )}
+            {error && (
+              <div className="p-4 text-red-500">
+                {error}
+              </div>
+            )}
 
-          {searchResults.map((result) => (
-            <div
-              key={result.id}
-              className={`p-4 cursor-pointer border-b transition-all duration-200
-                ${themeStyles.resultItem[theme]} last:border-0`}
-              onClick={() => handleResultClick(result)}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className={`font-medium ${themeStyles.text.primary[theme]}`}>
-                    {result.name}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <span className={themeStyles.text.secondary[theme]}>
-                      {result.symbol}
-                    </span>
-                    <span className={themeStyles.text.tertiary[theme]}>
-                      {result.sector}
+            {searchResults.map((result) => (
+              <div
+                key={result.id}
+                className={`p-4 cursor-pointer border-b transition-all duration-200
+                  ${themeStyles.resultItem[theme]} last:border-0`}
+                onClick={() => handleResultClick(result)}
+              >
+                <div className="flex justify-between items-start gap-4">
+                  <div className="min-w-0 flex-1">
+                    <h3 className={`font-medium truncate ${themeStyles.text.primary[theme]}`}>
+                      {result.name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className={`${themeStyles.text.secondary[theme]} font-medium`}>
+                        {result.symbol}
+                      </span>
+                      <span className={`${themeStyles.text.tertiary[theme]} truncate`}>
+                        {result.sector}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className={`${themeStyles.text.primary[theme]} font-medium`}>
+                      ₹{formatNumber(result.price)}
+                    </p>
+                    <span className={`text-sm font-medium ${
+                      parseFloat(result.change) >= 0 ? 'text-green-500' : 'text-red-500'
+                    }`}>
+                      {formatPercentage(result.change)}
                     </span>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className={themeStyles.text.primary[theme]}>
-                    ₹{formatNumber(result.price)}
-                  </p>
-                  <span className={`text-sm ${
-                    parseFloat(result.change) >= 0 ? 'text-green-500' : 'text-red-500'
-                  }`}>
-                    {formatPercentage(result.change)}
-                  </span>
-                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

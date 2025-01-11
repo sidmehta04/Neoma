@@ -100,7 +100,7 @@ const SharesSection = () => {
   return (
     <section className={`w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 
                       transition-colors duration-300
-                      ${theme === "dark" ? "bg-gray-900" : "bg-gradient-to-b from-white-50 to-white"}`}>
+                      ${theme === "dark" ? "bg-rgb(11, 15, 23)" : "bg-gradient-to-b from-white-50 to-white"}`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 sm:mb-12">
           <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4 

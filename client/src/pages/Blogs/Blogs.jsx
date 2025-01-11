@@ -50,7 +50,7 @@ const BlogPage = () => {
   }
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-rgb(11, 15, 23)' : 'bg-white'}`}>
       <main className="container mx-auto px-4 py-6 sm:py-8 md:py-12">
         <h1 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 ${
           theme === 'dark' ? 'text-white' : 'text-blue-900'

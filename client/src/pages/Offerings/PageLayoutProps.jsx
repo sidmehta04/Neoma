@@ -47,7 +47,7 @@ const BasePageLayout = ({
   `;
 
   return (
-    <div className={`min-h-screen w-full ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+    <div className={`min-h-screen w-full ${theme === 'dark' ? 'bg-rgb(11, 15, 23) text-gray-100' : 'bg-white text-gray-900'}`}>
       <style>{customStyles}</style>
       
       {/* Hero Section */}
@@ -97,7 +97,7 @@ const BasePageLayout = ({
       ))}
 
       {/* CTA Section */}
-      <section className={`py-8 sm:py-12 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+      <section className={`py-8 sm:py-12 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-rgb(11, 15, 23)' : 'bg-gray-50'}`}>
         <div className="max-w-4xl mx-auto text-center space-y-3 md:space-y-4">
           <h2 className="text-2xl sm:text-3xl font-bold">
             {ctaTitle}
@@ -127,7 +127,7 @@ const BasePageLayout = ({
           <div className="max-w-6xl mx-auto">
             <div className={`p-4 sm:p-6 rounded-xl border
               ${theme === 'dark' 
-                ? 'bg-gray-800/60 border-gray-700' 
+                ? 'bg-rgb(11, 15, 23) border-gray-700' 
                 : 'bg-white border-gray-200 shadow-sm'}`}
             >
               {summaryContent}

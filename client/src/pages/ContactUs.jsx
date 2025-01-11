@@ -103,7 +103,7 @@ const ContactForm = () => {
 
   return (
     <div className={`w-full mx-auto px-4 py-8 sm:py-12 lg:py-16 transition-colors duration-200
-      ${isDark ? "bg-gray-900" : "bg-white"}`}>
+      ${isDark ? "bg-rgb(11, 15, 23)" : "bg-white"}`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 sm:mb-12">
           <h1 className={`text-3xl sm:text-4xl font-bold mb-4 
