@@ -11,6 +11,14 @@ import {
   Calculator,
   HelpCircle,
   FileText,
+  Building2,
+  LineChart,
+  Rocket,
+  Boxes,
+  Feather,
+  DollarSignIcon,
+  SearchCheck
+  
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import ThemeToggle from "../sections/ThemeToggle";
@@ -32,13 +40,13 @@ const Navbar = () => {
       name: "Unlisted Shares",
       path: "/get-started",
       desc: "Invest in high-potential private company shares",
-      icon: CircleDollarSign,
+      icon: SearchCheck,
     },
     {
       name: "Mutual Funds",
       path: "/mutual-funds",
       desc: "Expertly managed diversified investment portfolios",
-      icon: BarChart3,
+      icon: DollarSignIcon,
     },
     {
       name: "Bonds",
@@ -56,19 +64,19 @@ const Navbar = () => {
       name: "Angel Investment",
       path: "/pre-ipo",
       desc: "Early-stage investment in promising startups",
-      icon: CircleDollarSign,
+      icon: Feather,
     },
     {
       name: "Portfolio Suggestions",
       path: "/portfolio",
       desc: "Personalized investment recommendations",
-      icon: BarChart3,
+      icon: Rocket,
     },
     {
       name: "Alternative Investment",
       path: "/alternative",
       desc: "Non-traditional investment opportunities",
-      icon: Settings,
+      icon: BarChart3,
     },
   ];
 
