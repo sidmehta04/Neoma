@@ -1,4 +1,12 @@
-import React, { useState, useEffect, Suspense, lazy, memo } from "react";
+import React, {
+  useState,
+  useEffect,
+  Suspense,
+  lazy,
+  memo,
+  useCallback,
+  useMemo,
+} from "react";
 import { useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import {
@@ -8,7 +16,6 @@ import {
   Info,
   Share2,
   Users,
-
   Calendar,
 } from "lucide-react";
 import SearchBar from "../components/ui/Searchbar";
@@ -22,12 +29,20 @@ import { styles } from "../Styles/shareDetailStyles";
 import { formatters } from "../Styles/shareDetailUtils";
 import axios from "axios";
 
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_URL2 ||
-  "http://localhost:5001";
+// Create axios instance with default config
+const axiosInstance = axios.create({
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    import.meta.env.VITE_API_URL2 ||
+    "http://localhost:5001",
+  withCredentials: true,
+  timeout: 10000, // 10 second timeout
+});
 
-// Lazy load the financials tab
+// Cache for API responses
+const cache = new Map();
+
+// Lazy load components with prefetch
 const FinancialsTab = lazy(() => import("../components/ui/Financials"));
 const ManagementTab = lazy(
   () => import("../pages/SharedDetailComponents/Management")
@@ -35,10 +50,26 @@ const ManagementTab = lazy(
 const LoadingSkeletonCard = lazy(
   () => import("../pages/SharedDetailComponents/Skeleton")
 );
-const MetricCard = lazy(() => import("../pages/SharedDetailComponents/Metric"));
+const MetricCard = memo(
+  lazy(() => import("../pages/SharedDetailComponents/Metric"))
+);
 const OverviewTab = lazy(
   () => import("../pages/SharedDetailComponents/Overview")
 );
+
+// Preload components
+const preloadComponents = () => {
+  const componentPromises = [
+    import("../components/ui/Financials"),
+    import("../pages/SharedDetailComponents/Management"),
+    import("../pages/SharedDetailComponents/Skeleton"),
+    import("../pages/SharedDetailComponents/Metric"),
+    import("../pages/SharedDetailComponents/Overview"),
+  ];
+
+  Promise.all(componentPromises).catch(console.error);
+};
+
 // Constants
 const TABS = [
   { id: "overview", label: "Overview", icon: Info },
@@ -52,20 +83,65 @@ const SHARE_OPTIONS = [
     label: "Share to WhatsApp",
     href: (url, text) =>
       `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`,
-    icon: () => "https://wa.me/favicon.ico",
   },
   {
     id: "telegram",
     label: "Share to Telegram",
     href: (url, text) =>
-      `https://t.me/share/url?url=${encodeURIComponent(
-        url
-      )}&text=${encodeURIComponent(text)}`,
-    icon: () => "https://telegram.org/favicon.ico",
+      `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
   },
 ];
 
+// Memoized Components
+const CompanyHeader = memo(({ companyData, theme }) => (
+  <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
+    <div
+      className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center 
+      text-lg sm:text-xl lg:text-2xl font-bold ${styles.logo[theme]}`}
+    >
+      {companyData.symbol?.slice(0, 2)}
+    </div>
+    <div>
+      <h1
+        className={`text-lg sm:text-xl lg:text-3xl font-bold ${styles.text.primary[theme]}`}
+      >
+        {companyData.name}
+      </h1>
+      <p
+        className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base`}
+      >
+        {companyData.sector}
+      </p>
+    </div>
+  </div>
+));
 
+const StockPrice = memo(({ latestPrice, theme }) => (
+  <div className="flex flex-col items-start sm:items-end">
+    <p
+      className={`text-xl sm:text-2xl lg:text-4xl font-bold ${styles.text.primary[theme]} blur-lg select-none`}
+    >
+      ₹{formatters.formatNumber(latestPrice?.price)}
+    </p>
+    <div
+      className={`flex items-center space-x-1 sm:space-x-2 blur-sm select-none 
+      ${latestPrice?.change_percentage >= 0 ? "text-green-500" : "text-red-500"}`}
+    >
+      {latestPrice?.change_percentage >= 0 ? (
+        <TrendingUp size={16} className="sm:w-5 lg:w-6" />
+      ) : (
+        <TrendingDown size={16} className="sm:w-5 lg:w-6" />
+      )}
+      <span className="text-sm sm:text-base lg:text-xl font-semibold">
+        {formatters.formatPercentage(latestPrice?.change_percentage)}
+      </span>
+    </div>
+    <p className={`text-xs mt-1 ${styles.text.secondary[theme]}`}>
+      *Price hidden for regulatory purpose please contact us directly for best
+      price
+    </p>
+  </div>
+));
 
 // Main ShareDetail Component
 const ShareDetail = () => {
@@ -76,46 +152,65 @@ const ShareDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch company data with caching and error handling
+  const fetchCompanyData = useCallback(async () => {
+    if (!shareName) return;
+
+    const cacheKey = `company-${shareName}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData && Date.now() - cachedData.timestamp < 60000) {
+      setCompanyData(cachedData.data);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.get(
+        `/api/shares-detail/${encodeURIComponent(shareName)}`
+      );
+      const data = response.data;
+
+      cache.set(cacheKey, {
+        data,
+        timestamp: Date.now(),
+      });
+
+      setCompanyData(data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching company data:", err);
+      setError(err.response?.data?.error || "Failed to load share details");
+    } finally {
+      setLoading(false);
+    }
+  }, [shareName]);
+
+  // Initialize data fetching and component preloading
   useEffect(() => {
     let isMounted = true;
-    const fetchCompanyData = async () => {
-      if (!shareName) return;
 
-      try {
-        const response = await axios.get(
-          `${API_URL}/api/shares-detail/${encodeURIComponent(shareName)}`,
-          { withCredentials: true }
-        );
-
-        if (isMounted) {
-          setCompanyData(response.data);
-          setError(null);
-        }
-      } catch (err) {
-        console.error("Error fetching company data:", err);
-        if (isMounted) {
-          setError(err.response?.data?.error || "Failed to load share details");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+    const initialize = async () => {
+      setLoading(true);
+      if (isMounted) {
+        await fetchCompanyData();
+        preloadComponents();
       }
     };
 
-    setLoading(true);
-    fetchCompanyData();
+    initialize();
 
-    // Set up periodic refresh for price data (optional)
-    const refreshInterval = setInterval(fetchCompanyData, 60000); // Refresh every minute
+    // Set up periodic refresh for price data
+    const refreshInterval = setInterval(fetchCompanyData, 60000);
 
     return () => {
       isMounted = false;
       clearInterval(refreshInterval);
     };
-  }, [shareName]);
-  // Memoized values
-  const metricCards = React.useMemo(
+  }, [fetchCompanyData]);
+
+  // Memoized metric cards data
+  const metricCards = useMemo(
     () => [
       {
         id: "market_cap",
@@ -141,6 +236,11 @@ const ShareDetail = () => {
     ],
     [companyData]
   );
+
+  // Memoized share handlers
+  const handleShare = useCallback((href) => {
+    window.open(href, "_blank", "width=550,height=450");
+  }, []);
 
   if (loading) {
     return (
@@ -168,65 +268,13 @@ const ShareDetail = () => {
       className={`min-h-screen ${styles.container[theme]} transition-colors duration-300`}
     >
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-6 lg:py-8">
-        {/* Company Header */}
+        {/* Company Card */}
         <div
           className={`${styles.card[theme]} rounded-xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 lg:mb-8`}
         >
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 lg:gap-6">
-            {/* Company Logo and Info */}
-            <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
-              <div
-                className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center 
-                text-lg sm:text-xl lg:text-2xl font-bold ${styles.logo[theme]}`}
-              >
-                {companyData.symbol?.slice(0, 2)}
-              </div>
-              <div>
-                <h1
-                  className={`text-lg sm:text-xl lg:text-3xl font-bold ${styles.text.primary[theme]}`}
-                >
-                  {companyData.name}
-                </h1>
-                <p
-                  className={`${styles.text.secondary[theme]} text-xs sm:text-sm lg:text-base`}
-                >
-                  {companyData.sector}
-                </p>
-              </div>
-            </div>
-
-            {/* Stock Price */}
-
-            {/* Stock Price */}
-            <div className="flex flex-col items-start sm:items-end">
-              <p
-                className={`text-xl sm:text-2xl lg:text-4xl font-bold ${styles.text.primary[theme]} blur-lg select-none`}
-              >
-                ₹{formatters.formatNumber(companyData.latestPrice?.price)}
-              </p>
-              <div
-                className={`flex items-center space-x-1 sm:space-x-2 blur-sm select-none ${
-                  companyData.latestPrice?.change_percentage >= 0
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                {companyData.latestPrice?.change_percentage >= 0 ? (
-                  <TrendingUp size={16} className="sm:w-5 lg:w-6" />
-                ) : (
-                  <TrendingDown size={16} className="sm:w-5 lg:w-6" />
-                )}
-                <span className="text-sm sm:text-base lg:text-xl font-semibold">
-                  {formatters.formatPercentage(
-                    companyData.latestPrice?.change_percentage
-                  )}
-                </span>
-              </div>
-              <p className={`text-xs mt-1 ${styles.text.secondary[theme]}`}>
-                *Price hidden for regulatory purpose please contact us directly
-                for best price
-              </p>
-            </div>
+            <CompanyHeader companyData={companyData} theme={theme} />
+            <StockPrice latestPrice={companyData.latestPrice} theme={theme} />
           </div>
 
           {/* Metric Cards Grid */}
@@ -243,9 +291,7 @@ const ShareDetail = () => {
             <div className="flex items-center space-x-2">
               <Calendar
                 size={16}
-                className={`sm:w-5 lg:w-6 ${
-                  theme === "light" ? "text-blue-600" : "text-blue-400"
-                }`}
+                className={`sm:w-5 lg:w-6 ${theme === "light" ? "text-blue-600" : "text-blue-400"}`}
               />
               <div className="flex flex-col">
                 <span
@@ -305,7 +351,7 @@ const ShareDetail = () => {
                         className="flex items-center space-x-2 text-sm sm:text-base"
                         onClick={(e) => {
                           e.preventDefault();
-                          window.open(href, "_blank", "width=550,height=450");
+                          handleShare(href);
                         }}
                       >
                         {option.label}
@@ -337,7 +383,7 @@ const ShareDetail = () => {
           ))}
         </div>
 
-        {/* Tab Content with Error Boundary and Suspense */}
+        {/* Tab Content */}
         <ErrorBoundary fallback={<ErrorFallback theme={theme} />}>
           <Suspense fallback={<LoadingSkeletonCard />}>
             <div className="space-y-3 sm:space-y-4 lg:space-y-6">

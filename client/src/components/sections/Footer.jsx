@@ -31,6 +31,9 @@ const Footer = () => {
             <p className="text-xs sm:text-sm mb-6">
               CIN (Corporate Identity Number) -U64990DL2025PTC440724
             </p>
+            <p className="text-xs sm:text-sm mb-6">
+              ARN (Application Reference Number) -304426
+            </p>
             <div className="flex space-x-4">
               <a
                 href="https://www.linkedin.com/company/neoma-capital"
