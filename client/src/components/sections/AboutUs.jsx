@@ -16,38 +16,42 @@ const AboutImage = () => {
           height="100%"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <defs>
+<defs>
             <pattern
               id="smallGrid"
-              width="20"
-              height="20"
+              width="10"
+              height="10"
               patternUnits="userSpaceOnUse"
+              className="sm:w-20 sm:h-20"
             >
               <path
-                d="M 20 0 L 0 0 0 20"
+                d="M 10 0 L 0 0 0 10"
                 fill="none"
                 stroke={theme === 'dark' ? '#2C3340' : '#F0F1F3'}
-                strokeWidth="0.5"
+                strokeWidth="0.25"
+                className="sm:stroke-[0.5]"
               />
             </pattern>
             <pattern
               id="grid"
-              width="100"
-              height="100"
+              width="50"
+              height="50"
               patternUnits="userSpaceOnUse"
+              className="sm:w-100 sm:h-100"
             >
-              <rect width="100" height="100" fill="url(#smallGrid)" />
+              <rect width="50" height="50" fill="url(#smallGrid)" className="sm:w-100 sm:h-100" />
               <path
-                d="M 100 0 L 0 0 0 100"
+                d="M 50 0 L 0 0 0 50"
                 fill="none"
                 stroke={theme === 'dark' ? '#374151' : '#E5E7EB'}
-                strokeWidth="1"
+                strokeWidth="0.5"
+                className="sm:stroke-1"
               />
             </pattern>
           </defs>
-          <g transform="translate(-400, -400) rotate(0)"> {/* Controls: translate(x, y) rotate(degrees) */}
-            <rect width="150%" height="150%" fill={theme === 'dark' ? 'rgb(11,15,23)' : '#FFFFFF'} />
-            <rect width="150%" height="150%" fill="url(#grid)" />
+          <g transform="scale(0.75) translate(-200, -200) sm:scale(1) sm:translate(-400, -400)">
+            <rect width="200%" height="200%" fill={theme === 'dark' ? 'rgb(11,15,23)' : '#FFFFFF'} />
+            <rect width="200%" height="200%" fill="url(#grid)" />
                   </g>
         </svg>
       </div>
