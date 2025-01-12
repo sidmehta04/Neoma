@@ -1,4 +1,3 @@
-// App.jsx
 import React, { Suspense, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
@@ -178,7 +177,7 @@ const HomePage = () => (
         <HeroSection />
       </ErrorBoundary>
       <ErrorBoundary>
-        <SharesSection />
+        <SharesSection id="shares-section" />
       </ErrorBoundary>
       <ErrorBoundary>
         <AboutSection />

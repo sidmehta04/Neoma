@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, MapPinned } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import axios from 'axios';
 
@@ -135,7 +135,7 @@ const ContactForm = () => {
                   </h3>
                   <p className={`text-base leading-relaxed
                     ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-                    2/16 FF RS Nehru Enclave KalKaji D Block, New Delhi -110019
+                    2/16 FF RS Nehru Enclave New Delhi -110019
                   </p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ const ContactForm = () => {
               </div>
             </div>
 
-            <div className="mt-12">
+            <div className="mt-12 relative">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3505.095656387876!2d77.25732719999999!3d28.545557499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s!2s!5e0!3m2!1sen!2sin!4v1673000000000!5m2!1sen!2sin"
                 className={`w-full h-64 sm:h-72 rounded-lg border transition-colors duration-200
@@ -186,6 +186,12 @@ const ContactForm = () => {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <MapPinned 
+                  className={`w-10 h-10 animate-bounce 
+                    ${isDark ? "text-red-500" : "text-red-600"}`} 
+                />
+              </div>
             </div>
           </div>
 

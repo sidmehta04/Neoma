@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, MessageCircleQuestion } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from '../../context/ThemeContext';
 
@@ -15,6 +15,7 @@ const ShareCard = ({
   const { theme } = useTheme();
   const isPositive = parseFloat(change) >= 0;
   const [imageError, setImageError] = useState(false);
+  const [showInquiryTooltip, setShowInquiryTooltip] = useState(false);
 
   const handleClick = () => {
     navigate(`/shares/${encodeURIComponent(name)}`);
@@ -34,9 +35,16 @@ const ShareCard = ({
     setImageError(true);
   };
 
+  const handleWhatsAppInquiry = () => {
+    const whatsappNumber = "+919220445243"; // Neoma Capital contact number
+    const message = `Hi, I'd like to know the current price for ${name} share.`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <div
-      className={`p-4 sm:p-5 md:p-6 rounded-xl backdrop-blur-sm transition-all duration-300 cursor-pointer feature-card hover:scale-[1.02]`}
+      className={`p-4 sm:p-5 md:p-6 rounded-xl backdrop-blur-sm transition-all duration-300 cursor-pointer feature-card hover:scale-[1.02] relative`}
       onClick={handleClick}
       style={{
         backgroundColor: theme === 'light' 
@@ -92,9 +100,32 @@ const ShareCard = ({
             >
               {price ? `₹${Number(price).toFixed(2)}` : 'N/A'}
             </p>
-            <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
-              *Price hidden
-            </p>
+            <div className="flex items-center space-x-2">
+              <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+                *Price hidden
+              </p>
+              <div 
+                className="relative"
+                onMouseEnter={() => setShowInquiryTooltip(true)}
+                onMouseLeave={() => setShowInquiryTooltip(false)}
+              >
+                <MessageCircleQuestion 
+                  className={`w-4 h-4 cursor-pointer 
+                    ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`} 
+                  onClick={handleWhatsAppInquiry}
+                />
+                {showInquiryTooltip && (
+                  <div 
+                    className={`absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs rounded-md
+                      ${theme === 'light' 
+                        ? 'bg-gray-800 text-white' 
+                        : 'bg-gray-200 text-gray-800'}`}
+                  >
+                    Inquire via WhatsApp
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
         <div

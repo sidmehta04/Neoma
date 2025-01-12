@@ -51,17 +51,18 @@ const BasePageLayout = ({
       <style>{customStyles}</style>
       
       {/* Hero Section */}
-      <section className="relative py-8 sm:py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative py-4 sm:py-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
-            <div className="text-center md:text-left space-y-3 md:space-y-4">
+            <div className="text-center md:text-left space-y-0 md:space-y-2">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                 {title}
               </h1>
               <p className="text-lg sm:text-xl opacity-90 max-w-2xl mx-auto md:mx-0">
                 {subtitle}
               </p>
-              <div className="mt-4 md:mt-6">
+            
+              <div className="pt-8 md:pt-12 ">
                 <Link 
                   to="/contact"
                   className={`inline-flex items-center gap-2 px-6 py-3 text-base font-medium rounded-lg
@@ -82,13 +83,13 @@ const BasePageLayout = ({
         </div>
       </section>
 
-      {/* Dynamic Sections */}
+      {/* Rest of the sections */}
       {sections.map((Section, index) => (
         <section 
           key={index} 
           className={`py-8 sm:py-12 px-4 sm:px-6 lg:px-8 ${
             index % 2 === 1 
-              ? (theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50') 
+              ? (theme === 'dark' ? 'rgb(11, 15, 23)' : 'bg-gray-50') 
               : ''
           }`}
         >
@@ -121,20 +122,6 @@ const BasePageLayout = ({
         </div>
       </section>
 
-      {/* Summary Section */}
-      {summaryContent && (
-        <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <div className={`p-4 sm:p-6 rounded-xl border
-              ${theme === 'dark' 
-                ? 'bg-rgb(11, 15, 23) border-gray-700' 
-                : 'bg-white border-gray-200 shadow-sm'}`}
-            >
-              {summaryContent}
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 };

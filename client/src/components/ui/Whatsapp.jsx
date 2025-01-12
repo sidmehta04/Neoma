@@ -20,8 +20,8 @@ const WhatsAppContact = () => {
 
   const contacts = [
     { 
-      name: "Harsh Agarwal", 
-      title: "FOUNDER",
+      name: "Neoma Capital", 
+      title: "Leave a message",
       number: "+91 922044 5243" 
     },
   ];

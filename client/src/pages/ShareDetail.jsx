@@ -17,6 +17,7 @@ import {
   Share2,
   Users,
   Calendar,
+  MessageCircleQuestion
 } from "lucide-react";
 import SearchBar from "../components/ui/Searchbar";
 import {
@@ -116,32 +117,68 @@ const CompanyHeader = memo(({ companyData, theme }) => (
   </div>
 ));
 
-const StockPrice = memo(({ latestPrice, theme }) => (
-  <div className="flex flex-col items-start sm:items-end">
-    <p
-      className={`text-xl sm:text-2xl lg:text-4xl font-bold ${styles.text.primary[theme]} blur-lg select-none`}
-    >
-      ₹{formatters.formatNumber(latestPrice?.price)}
-    </p>
-    <div
-      className={`flex items-center space-x-1 sm:space-x-2 blur-sm select-none 
-      ${latestPrice?.change_percentage >= 0 ? "text-green-500" : "text-red-500"}`}
-    >
-      {latestPrice?.change_percentage >= 0 ? (
-        <TrendingUp size={16} className="sm:w-5 lg:w-6" />
-      ) : (
-        <TrendingDown size={16} className="sm:w-5 lg:w-6" />
-      )}
-      <span className="text-sm sm:text-base lg:text-xl font-semibold">
-        {formatters.formatPercentage(latestPrice?.change_percentage)}
-      </span>
+
+const StockPrice = memo(({ latestPrice, theme, companyData }) => {
+  const [showInquiryTooltip, setShowInquiryTooltip] = useState(false);
+
+  const handleWhatsAppInquiry = () => {
+    const whatsappNumber = "+919220445243"; // Neoma Capital contact number
+    const stockName = companyData?.name || 'this stock';
+    const message = `Hi, I'd like to get detailed pricing information for ${stockName} stock.`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  return (
+    <div className="flex flex-col items-start sm:items-end">
+      <p
+        className={`text-xl sm:text-2xl lg:text-4xl font-bold ${styles.text.primary[theme]} blur-lg select-none`}
+      >
+        ₹{formatters.formatNumber(latestPrice?.price)}
+      </p>
+      <div
+        className={`flex items-center space-x-1 sm:space-x-2 blur-sm select-none 
+        ${latestPrice?.change_percentage >= 0 ? "text-green-500" : "text-red-500"}`}
+      >
+        {latestPrice?.change_percentage >= 0 ? (
+          <TrendingUp size={16} className="sm:w-5 lg:w-6" />
+        ) : (
+          <TrendingDown size={16} className="sm:w-5 lg:w-6" />
+        )}
+        <span className="text-sm sm:text-base lg:text-xl font-semibold">
+          {formatters.formatPercentage(latestPrice?.change_percentage)}
+        </span>
+      </div>
+      <div className="flex items-center space-x-2">
+        <p className={`text-xs mt-1 ${styles.text.secondary[theme]}`}>
+          *Price hidden for regulatory purpose please contact us directly for best price
+        </p>
+        <div 
+          className="relative"
+          onMouseEnter={() => setShowInquiryTooltip(true)}
+          onMouseLeave={() => setShowInquiryTooltip(false)}
+        >
+          <MessageCircleQuestion 
+            className={`w-4 h-4 cursor-pointer 
+              ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`} 
+            onClick={handleWhatsAppInquiry}
+          />
+          {showInquiryTooltip && (
+            <div 
+              className={`absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs rounded-md
+                ${theme === 'light' 
+                  ? 'bg-gray-800 text-white' 
+                  : 'bg-gray-200 text-gray-800'}`}
+            >
+              Inquire via WhatsApp
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-    <p className={`text-xs mt-1 ${styles.text.secondary[theme]}`}>
-      *Price hidden for regulatory purpose please contact us directly for best
-      price
-    </p>
-  </div>
-));
+  );
+});
+
 
 // Main ShareDetail Component
 const ShareDetail = () => {
@@ -274,8 +311,11 @@ const ShareDetail = () => {
         >
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 lg:gap-6">
             <CompanyHeader companyData={companyData} theme={theme} />
-            <StockPrice latestPrice={companyData.latestPrice} theme={theme} />
-          </div>
+            <StockPrice 
+  latestPrice={companyData.latestPrice} 
+  theme={theme} 
+  companyData={companyData} 
+/>          </div>
 
           {/* Metric Cards Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mt-3 sm:mt-4 lg:mt-6">

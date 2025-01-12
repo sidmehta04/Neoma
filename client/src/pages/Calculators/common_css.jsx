@@ -47,14 +47,14 @@ export const getCalculatorStyles = (theme) => ({
   legendItem: "flex items-center gap-2 text-sm sm:text-base",
   legendDot: (isFirst) => `w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${
     isFirst 
-      ? theme === 'dark' ? 'bg-blue-400' : 'bg-gray-800'
-      : 'bg-blue-500'
+      ? (theme === 'dark' ? 'bg-blue-400' : 'bg-white')
+      : (theme === 'dark' ? 'bg-white' : 'bg-white')
   }`,
   legendText: `${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-sm sm:text-base`,
   
   // Chart Colors
   chartColors: {
     primary: theme === 'dark' ? '#60A5FA' : '#1e40af',
-    secondary: theme === 'dark' ? '#3B82F6' : '#3b82f6'
+    secondary: theme === 'dark' ? 'white' : 'white'
   }
 });

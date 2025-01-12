@@ -20,7 +20,6 @@ import {
   SearchCheck
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import ThemeToggle from "../sections/ThemeToggle";
 import neomalogo from "../../assets/neomalogo2.svg";
 
 const Navbar = () => {
@@ -36,7 +35,7 @@ const Navbar = () => {
       name: "Unlisted Shares",
       path: "/get-started",
       desc: "Invest in high-potential private company shares",
-      icon: SearchCheck,
+      icon: BarChart3,
     },
     {
       name: "Mutual Funds",
@@ -48,7 +47,7 @@ const Navbar = () => {
       name: "Bonds",
       path: "/debt",
       desc: "Stable fixed-income investment opportunities",
-      icon: Settings,
+      icon: SearchCheck,
     },
     {
       name: "Private Boutique",
@@ -72,7 +71,7 @@ const Navbar = () => {
       name: "Alternative Investment",
       path: "/alternative",
       desc: "Non-traditional investment opportunities",
-      icon: BarChart3,
+      icon: Settings,
     },
   ];
 
@@ -402,7 +401,6 @@ const Navbar = () => {
                 className={`flex items-center space-x-3 px-3 py-3 rounded-lg
                 transition-colors duration-150`}
               >
-                <ThemeToggle isMobileMenu={true} />
               </div>
             </div>
           </div>
@@ -452,7 +450,6 @@ const Navbar = () => {
           >
             Contact Us
           </Link>
-          <ThemeToggle />
         </div>
       </div>
 

@@ -81,19 +81,7 @@ const HeroSection = () => {
                     px-4 sm:px-6 md:px-8 py-8 sm:py-12">
         <div className="max-w-4xl w-full mx-auto md:ml-8 lg:ml-16 xl:ml-24">
           {/* Join Badge */}
-          <div className="mb-4 sm:mb-6 md:mb-8 animate-fade-in">
-            <span className={`inline-flex items-center px-3 py-1 sm:px-4 sm:py-2 
-                         rounded-full text-xs sm:text-sm font-medium 
-                         transform transition-all duration-300 hover:scale-105
-                         cursor-pointer shadow-lg
-                         ${
-                           theme === "dark"
-                             ? "bg-gray-500 text-white hover:bg-gray-400"
-                             : "bg-blue-500 text-white hover:bg-blue-400"
-                         }`}>
-              JOIN NEOMA
-            </span>
-          </div>
+
 
           {/* Main Heading with Typing Effect */}
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl 

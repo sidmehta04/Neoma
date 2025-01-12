@@ -269,8 +269,8 @@ const FAQSection = () => {
           
           <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r bg-clip-text text-transparent ${
             theme === 'dark'
-              ? 'from-blue-400 to-purple-400'
-              : 'from-blue-600 to-purple-600'
+              ? 'from-blue-400 to-blue-600'
+              : 'from-blue-600 to-blue-600'
           }`}>
             Frequently Asked Questions
           </h1>
