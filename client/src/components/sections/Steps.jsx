@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Search, Users, CheckCircle } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '../../components/ui/Card';
 
 const StepCard = ({ icon: Icon, title, description, step, isVisible, delay }) => (
   <div 
