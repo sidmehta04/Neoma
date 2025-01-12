@@ -11,7 +11,7 @@ const StepCard = ({ icon: Icon, title, description, step, isVisible, delay }) =>
     }`}
     style={{ transitionDelay: `${delay}ms` }}
   >
-    <Card className="relative mb-6 last:mb-0 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-gray-800/50 border-gray-700">
+    <Card className="relative mb-16 sm:mb-20 md:mb-24 last:mb-4 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-gray-800/50 border-gray-700">
       <div className="absolute -left-3 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-sm text-white
                     transform transition-transform duration-500 hover:scale-110 hover:bg-blue-400">
         {step}
@@ -135,7 +135,7 @@ const UnlistedStocksSteps = () => {
         </span>
       </h2>
       
-      <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
+      <div className="flex flex-col lg:flex-row gap-12 max-w-6xl mx-auto">
         {/* Left Column - Steps */}
         <div className="w-full lg:w-1/2 relative pl-8">
           <ProgressLine progress={progress} />
