@@ -29,6 +29,7 @@ const lazyLoad = (importPath, componentName) => React.lazy(() =>
 const HeroSection = lazyLoad(import('./components/sections/Herosection'), 'HeroSection');
 const AboutSection = lazyLoad(import('./components/sections/AboutUs'), 'AboutSection');
 const SharesSection = lazyLoad(import('./components/sections/SharesSection'), 'SharesSection');
+const StepCard= lazyLoad(import('./components/sections/Steps'), 'StepCard');
 
 // Pages
 const FAQ = lazyLoad(import('./pages/FAQ'), 'FAQ');
@@ -177,11 +178,15 @@ const HomePage = () => (
         <HeroSection />
       </ErrorBoundary>
       <ErrorBoundary>
-        <SharesSection id="shares-section" />
+        <SharesSection />
       </ErrorBoundary>
       <ErrorBoundary>
         <AboutSection />
       </ErrorBoundary>
+      <ErrorBoundary>
+        <StepCard />
+      </ErrorBoundary>
+
     </Suspense>
   </Layout>
 );

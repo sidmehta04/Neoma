@@ -125,7 +125,7 @@ const AboutSection = () => {
     }`}>
       <div className="container mx-auto px-4 sm:px-6 md:px-8 max-w-7xl">
         <div className="text-center mb-16 fade-in-section opacity-0">
-          <h2 className={`text-4xl sm:text-4xl font-bold 
+          <h2 className={`text-3xl sm:text-4xl font-bold 
                        tracking-tight transition-colors duration-300 mb-4
                        ${theme === 'dark'
                          ? 'text-white'
@@ -167,7 +167,7 @@ const AboutSection = () => {
                         ${theme === 'dark' 
                           ? 'bg-gray-800/30 backdrop-blur-sm' 
                           : 'bg-gradient-to-br from-blue-50 to-white shadow-xl'}`}>
-            <h3 className={`text-3xl sm:text-3xl  font-bold mb-8 
+            <h3 className={`text-xl sm:text-3xl  font-bold mb-8 
                          ${theme === 'dark' ? 'text-white' : 'text-blue-900'}`}>
               Join Our Journey
             </h3>
