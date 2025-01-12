@@ -110,13 +110,13 @@ const ShareCard = ({
                 onMouseLeave={() => setShowInquiryTooltip(false)}
               >
                 <MessageCircleQuestion 
-                  className={`w-4 h-4 cursor-pointer 
+                  className={`w-6 h-6 cursor-pointer 
                     ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`} 
                   onClick={handleWhatsAppInquiry}
                 />
                 {showInquiryTooltip && (
                   <div 
-                    className={`absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs rounded-md
+                    className={`absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap
                       ${theme === 'light' 
                         ? 'bg-gray-800 text-white' 
                         : 'bg-gray-200 text-gray-800'}`}
