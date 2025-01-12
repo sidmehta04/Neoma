@@ -11,7 +11,7 @@ module.exports = (supabase) => {
       const { data: companies, error: companyError } = await supabase
         .from("companies")
         .select(`
-          id, name, symbol, sector, face_value, about,
+          id, name, symbol, sector, face_value, about,logo,
           cin, registered_office, incorporation_date,
           board_members:board_members (id, name, position, category),
           company_subsidiaries:company_subsidiaries (id, name, relationship_type, ownership_percentage),

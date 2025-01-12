@@ -93,12 +93,24 @@ const SHARE_OPTIONS = [
   },
 ];
 
-// Memoized Components
 const CompanyHeader = memo(({ companyData, theme }) => (
   <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
+    {companyData.logo ? (
+      <img
+        src={companyData.logo}
+        alt={`${companyData.name} logo`}
+        className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-xl object-contain"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.style.display = 'none';
+          e.target.nextElementSibling.style.display = 'flex';
+        }}
+      />
+    ) : null}
     <div
       className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center 
       text-lg sm:text-xl lg:text-2xl font-bold ${styles.logo[theme]}`}
+      style={{ display: companyData.logo ? 'none' : 'flex' }}
     >
       {companyData.symbol?.slice(0, 2)}
     </div>
