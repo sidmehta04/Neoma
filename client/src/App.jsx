@@ -197,7 +197,7 @@ const MetaManager = () => {
     (route.path.includes(':') && location.pathname.startsWith(route.path.split(':')[0]))
   ) || routes[0];
 
-  const baseUrl = 'https://www.neomacapital.com/';
+  const baseUrl = 'https://www.google.com/search?q=neoma+capital&oq=neo&gs_lcrp=EgZjaHJvbWUqBggBEEUYOzIGCAAQRRg8MgYIARBFGDsyBggCEEUYOzIGCAMQRRg7MgYIBBBFGDwyBggFEEUYPDIGCAYQRRg8MgYIBxAuGEDSAQgxNzUxajBqMagCALACAA&sourceid=chrome&ie=UTF-8';
   const currentUrl = `${baseUrl}${location.pathname}`;
 
   return (
@@ -252,7 +252,7 @@ const routes = [
   { 
     path: '/', 
     element: <HomePage />, 
-    title: 'Neoma Capital - Premier Investment Management Services',
+    title: 'Neoma Capital ',
     description: 'Discover expert investment solutions with Neoma Capital. We offer comprehensive financial services including mutual funds, equity, pre-IPO investments, and personalized portfolio management.',
     keywords: 'investment management, mutual funds, equity investment, portfolio management, Neoma Capital, financial services India',
     schema: {
