@@ -106,7 +106,7 @@ const SharesSection = () => {
           <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4 
                        transition-colors duration-300
                        ${theme === "dark" ? "text-white" : "text-blue-900"}`}>
-            Featured Unlisted Shares
+            Trending Unlisted Shares
           </h2>
           <p className={`text-base sm:text-lg md:text-xl 
                       transition-colors duration-300
