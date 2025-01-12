@@ -161,31 +161,21 @@ const StockPrice = memo(({ latestPrice, theme, companyData }) => {
           {formatters.formatPercentage(latestPrice?.change_percentage)}
         </span>
       </div>
-      <div className="flex items-center space-x-2">
-        <p className={`text-xs mt-1 ${styles.text.secondary[theme]}`}>
+      <div className="mt-2 sm:mt-3">
+        <p className={`text-sm sm:text-base mb-2 ${styles.text.secondary[theme]}`}>
           *Price hidden for regulatory purpose please contact us directly for best price
         </p>
-        <div 
-          className="relative"
-          onMouseEnter={() => setShowInquiryTooltip(true)}
-          onMouseLeave={() => setShowInquiryTooltip(false)}
+        <button
+          onClick={handleWhatsAppInquiry}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all
+            ${theme === 'light' 
+              ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+              : 'bg-blue-500 hover:bg-blue-600 text-white'} 
+            shadow-md hover:shadow-lg transform hover:-translate-y-0.5`}
         >
-          <MessageCircleQuestion 
-            className={`w-4 h-4 cursor-pointer 
-              ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`} 
-            onClick={handleWhatsAppInquiry}
-          />
-          {showInquiryTooltip && (
-            <div 
-              className={`absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs rounded-md
-                ${theme === 'light' 
-                  ? 'bg-gray-800 text-white' 
-                  : 'bg-gray-200 text-gray-800'}`}
-            >
-              Inquire via WhatsApp
-            </div>
-          )}
-        </div>
+          <MessageCircleQuestion className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-sm sm:text-base font-medium">Inquire Price via WhatsApp</span>
+        </button>
       </div>
     </div>
   );
