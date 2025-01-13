@@ -69,7 +69,7 @@ const UnlistedStocksSteps = () => {
     {
       icon: FileText,
       title: "Stock Transfer",
-      description: "The stocks will be transferred to your account following all the necessary procedures and verifications at earliest."
+      description: "The stocks will be transferred to your account following all the necessary procedures."
     }
   ];
 
