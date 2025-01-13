@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { Link } from 'react-router-dom';
-import AboutImage1 from '../../assets/Image.webp';
+import AboutImage1 from '../../assets/WEBSITE.png';
 
 const AboutImage = () => {
   const { theme } = useTheme();
@@ -15,62 +15,9 @@ const AboutImage = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // Calculate transform values based on screen width
-  const scale = windowWidth >= 640 ? 1 : 0.55;
-  const translateX = windowWidth >= 640 ? -400 : -200;
-  const translateY = windowWidth >= 640 ? -400 : -200;
   
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-      {/* Enhanced grid background */}
-      <div className="absolute inset-0 z-0 transition-transform duration-300">
-        <svg
-          className="w-full h-full"
-          width="100%"
-          height="100%"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern
-              id="smallGrid"
-              width={windowWidth >= 640 ? "20" : "10"}
-              height={windowWidth >= 640 ? "20" : "10"}
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 10 0 L 0 0 0 10"
-                fill="none"
-                stroke={theme === 'dark' ? '#2C3340' : '#E8EFF9'}
-                strokeWidth={windowWidth >= 640 ? "0.5" : "0.25"}
-              />
-            </pattern>
-            <pattern
-              id="grid"
-              width={windowWidth >= 640 ? "100" : "50"}
-              height={windowWidth >= 640 ? "100" : "50"}
-              patternUnits="userSpaceOnUse"
-            >
-              <rect 
-                width={windowWidth >= 640 ? "100" : "50"} 
-                height={windowWidth >= 640 ? "100" : "50"} 
-                fill="url(#smallGrid)" 
-              />
-              <path
-                d={windowWidth >= 640 ? "M 100 0 L 0 0 0 100" : "M 50 0 L 0 0 0 50"}
-                fill="none"
-                stroke={theme === 'dark' ? '#374151' : '#D1E0F5'}
-                strokeWidth={windowWidth >= 640 ? "1" : "0.5"}
-              />
-            </pattern>
-          </defs>
-          <g transform={`scale(${scale}) translate(${translateX}, ${translateY})`}>
-            <rect width="200%" height="200%" fill={theme === 'dark' ? 'rgb(11,15,23)' : '#F8FAFC'} />
-            <rect width="200%" height="200%" fill="url(#grid)" />
-          </g>
-        </svg>
-      </div>
-      
       {/* Enhanced image container with better shadows and effects */}
       <div className="relative z-10 w-full max-w-lg mx-auto p-6 transform transition-all duration-500 hover:scale-[1.02]">
         <div className={`absolute inset-0 blur-xl opacity-20 ${
@@ -94,7 +41,6 @@ const AboutImage = () => {
   );
 };
 
-// Rest of the AboutSection component remains the same
 const AboutSection = () => {
   const { theme } = useTheme();
 
