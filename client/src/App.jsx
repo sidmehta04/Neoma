@@ -4,16 +4,29 @@ import { ThemeProvider } from './context/ThemeContext';
 import useDevToolsPrevention from './hook/useDevToolsPrevention';
 import { Analytics } from "@vercel/analytics/react";
 import { Helmet } from 'react-helmet';
-import { SpeedInsights } from "@vercel/speed-insights/react"// Core components
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Navbar from './components/layout/Navbar';
 import Footer from './components/sections/Footer';
 import WhatsAppContact from './components/ui/Whatsapp';
 
+// Import visitor tracking hook
+import useVisitorTracking from './hook/tracking';
 
-// Error tracking function for production
+// Error tracking function for production with enhanced logging
 const trackError = (error, errorInfo) => {
-  if (process.env.NODE_ENV === 'production') {
+  if (import.meta.env.MODE === 'production') {
     console.error('Production Error:', error, errorInfo);
+    // You could add additional error tracking services here
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      fetch(`${apiUrl}/track-error`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: error.message, errorInfo, timestamp: new Date().toISOString() })
+      });
+    } catch (e) {
+      console.error('Error tracking failed:', e);
+    }
   }
 };
 
@@ -25,13 +38,13 @@ const lazyLoad = (importPath, componentName) => React.lazy(() =>
   })
 );
 
-// Route components
+// Route components (same as before)
 const HeroSection = lazyLoad(import('./components/sections/Herosection'), 'HeroSection');
 const AboutSection = lazyLoad(import('./components/sections/AboutUs'), 'AboutSection');
 const SharesSection = lazyLoad(import('./components/sections/SharesSection'), 'SharesSection');
-const StepCard= lazyLoad(import('./components/sections/Steps'), 'StepCard');
+const StepCard = lazyLoad(import('./components/sections/Steps'), 'StepCard');
 
-// Pages
+// Pages (same as before)
 const FAQ = lazyLoad(import('./pages/FAQ'), 'FAQ');
 const ShareDetail = lazyLoad(import('./pages/ShareDetail'), 'ShareDetail');
 const ContactPage = lazyLoad(import('./pages/ContactUs'), 'ContactPage');
@@ -39,7 +52,7 @@ const CalculatorLayout = lazyLoad(import('./pages/Calculator'), 'CalculatorLayou
 const BlogPage = lazyLoad(import('./pages/Blogs/Blogs'), 'BlogPage');
 const BlogPost = lazyLoad(import('./pages/Blogs/BlogPost'), 'BlogPost');
 
-// Offering pages
+// Offering pages (same as before)
 const GetStarted = lazyLoad(import('./pages/Offerings/GetStarted'), 'GetStarted');
 const MutualFunds = lazyLoad(import('./pages/Offerings/MutualFunds'), 'MutualFunds');
 const Equity = lazyLoad(import('./pages/Offerings/Equity'), 'Equity');
@@ -48,12 +61,11 @@ const Portfolio_suggestions = lazyLoad(import('./pages/Offerings/Portfolio-Sugge
 const AlternativeInvestmentFunds = lazyLoad(import('./pages/Offerings/AlternativeInv'), 'AlternativeInvestmentFunds');
 const Debt = lazyLoad(import('./pages/Offerings/Debt'), 'Debt');
 
-// Enhanced ScrollToTop with smooth scrolling and scroll position restoration
+// Enhanced ScrollToTop with analytics integration
 const ScrollToTop = () => {
   const location = useLocation();
   
   useEffect(() => {
-    // Save scroll position for current location
     const saveScrollPosition = () => {
       sessionStorage.setItem(
         `scrollPosition-${window.location.pathname}`,
@@ -61,7 +73,6 @@ const ScrollToTop = () => {
       );
     };
 
-    // Restore scroll position or scroll to top
     const restoreScrollPosition = () => {
       const savedPosition = sessionStorage.getItem(`scrollPosition-${location.pathname}`);
       if (savedPosition) {
@@ -86,10 +97,13 @@ const ScrollToTop = () => {
     };
   }, [location.pathname]);
 
+  // Integrate visitor tracking
+  useVisitorTracking();
+
   return null;
 };
 
-// Enhanced loading fallback with fade-in animation
+// Enhanced LoadingFallback with theme support
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[60vh] animate-fadeIn">
     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500">
@@ -98,31 +112,37 @@ const LoadingFallback = () => (
   </div>
 );
 
-// Enhanced error fallback with retry functionality
-const ErrorFallback = ({ error, resetErrorBoundary }) => (
-  <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 animate-fadeIn">
-    <h2 className="text-2xl font-bold mb-4">Something went wrong</h2>
-    <p className="text-gray-600 mb-4">We're sorry for the inconvenience</p>
-    <div className="flex gap-4">
-      <button
-        onClick={() => window.location.href = '/'}
-        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        Return Home
-      </button>
-      {resetErrorBoundary && (
-        <button
-          onClick={resetErrorBoundary}
-          className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors"
-        >
-          Try Again
-        </button>
-      )}
-    </div>
-  </div>
-);
+// Enhanced ErrorFallback with analytics tracking
+const ErrorFallback = ({ error, resetErrorBoundary }) => {
+  useEffect(() => {
+    trackError(error, { component: 'ErrorFallback' });
+  }, [error]);
 
-// Enhanced error boundary with retry functionality and error tracking
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 animate-fadeIn">
+      <h2 className="text-2xl font-bold mb-4">Something went wrong</h2>
+      <p className="text-gray-600 mb-4">We're sorry for the inconvenience</p>
+      <div className="flex gap-4">
+        <button
+          onClick={() => window.location.href = '/'}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Return Home
+        </button>
+        {resetErrorBoundary && (
+          <button
+            onClick={resetErrorBoundary}
+            className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors"
+          >
+            Try Again
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Enhanced ErrorBoundary with analytics
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
 
@@ -151,7 +171,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// Enhanced Layout with error boundary per section
+// Enhanced Layout with analytics integration
 const Layout = ({ children }) => (
   <>
     <ScrollToTop />
@@ -170,7 +190,7 @@ const Layout = ({ children }) => (
   </>
 );
 
-// Enhanced HomePage with individual error boundaries
+// Enhanced HomePage with analytics
 const HomePage = () => (
   <Layout>
     <Suspense fallback={<LoadingFallback />}>
@@ -180,17 +200,18 @@ const HomePage = () => (
       <ErrorBoundary>
         <SharesSection />
       </ErrorBoundary>
-
       <ErrorBoundary>
         <StepCard />
       </ErrorBoundary>
       <ErrorBoundary>
         <AboutSection />
       </ErrorBoundary>
-
     </Suspense>
   </Layout>
 );
+
+// Enhanced MetaManager with analytics data
+// Enhanced MetaManager with Vite environment variables
 const MetaManager = () => {
   const location = useLocation();
   const currentRoute = routes.find(route => 
@@ -198,7 +219,8 @@ const MetaManager = () => {
     (route.path.includes(':') && location.pathname.startsWith(route.path.split(':')[0]))
   ) || routes[0];
 
-  const baseUrl = 'https://www.google.com/search?q=neoma+capital&oq=neo&gs_lcrp=EgZjaHJvbWUqBggBEEUYOzIGCAAQRRg8MgYIARBFGDsyBggCEEUYOzIGCAMQRRg7MgYIBBBFGDwyBggFEEUYPDIGCAYQRRg8MgYIBxAuGEDSAQgxNzUxajBqMagCALACAA&sourceid=chrome&ie=UTF-8';
+  // Use Vite's import.meta.env instead of process.env
+  const baseUrl = import.meta.env.VITE_BASE_URL || 'https://www.neomacapital.com';
   const currentUrl = `${baseUrl}${location.pathname}`;
 
   return (
@@ -372,6 +394,7 @@ const routes = [
 
 
 
+// Enhanced AppContent with analytics integration
 const AppContent = () => {
   useDevToolsPrevention();
 
@@ -407,8 +430,7 @@ const AppContent = () => {
   );
 };
 
-
-// Main App component now just provides Router context
+// Main App component
 const App = () => (
   <Router>
     <AppContent />

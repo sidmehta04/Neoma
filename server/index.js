@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { createClient } = require('@supabase/supabase-js');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config();
 
@@ -42,13 +43,12 @@ app.use(cors({
   maxAge: 86400
 }));
 
-// Add headers for better error handling
+// Basic middleware setup
+app.use(express.json());
 app.use((req, res, next) => {
   res.header('Content-Type', 'application/json');
   next();
 });
-
-app.use(express.json());
 
 // Initialize Supabase client
 let supabase;
@@ -61,7 +61,34 @@ try {
   console.error('Error initializing Supabase client:', error);
 }
 
-// Root endpoint with deployment info
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    error: 'Too many requests',
+    message: 'Please try again later',
+    timestamp: new Date().toISOString()
+  }
+});
+
+// Import routes
+const blogRoutes = require('./routes/blogs')(supabase);
+const financialsRoutes = require('./routes/financials')(supabase);
+const contactRoutes = require('./routes/contact')(supabase);
+const sharesRoutes = require('./routes/shares')(supabase);
+const contactFormRoutes = require('./routes/contact-form')(supabase);
+const shareDetailRoutes = require('./routes/shares-detail')(supabase);
+const companiesRoutes = require('./routes/companies')(supabase);
+const visitorTrackingRoutes = require('./routes/tracker')(supabase);
+
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
+// Root endpoint
 app.get('/', (req, res) => {
   res.json({
     message: 'Backend API is running',
@@ -72,7 +99,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check endpoint with detailed status
+// Health check endpoint
 app.get('/api/health', (req, res) => {
   const status = {
     service: 'ok',
@@ -113,26 +140,17 @@ app.get('/api/system', (req, res) => {
   });
 });
 
-// Import routes
-const blogRoutes = require('./routes/blogs')(supabase);
-const financialsRoutes = require('./routes/financials')(supabase);
-const contactRoutes = require('./routes/contact')(supabase);
-const sharesRoutes = require('./routes/shares')(supabase);
-const contactFormRoutes = require('./routes/contact-form')(supabase);
-const shareDetailRoutes = require('./routes/shares-detail')(supabase);
-const companiesRoutes = require('./routes/companies')(supabase);
-
-
-// Add logging middleware for routes
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+// Mount routes with logging
+app.use('/api/analytics', (req, res, next) => {
+  console.log('Analytics route hit:', req.path);
   next();
-});
+}, visitorTrackingRoutes);
+
 app.use('/api/companies', (req, res, next) => {
   console.log('Companies route hit:', req.path);
   next();
 }, companiesRoutes);
-// Mount routes
+
 app.use('/api/blog-posts', (req, res, next) => {
   console.log('Blog route hit:', req.path);
   next();
@@ -146,28 +164,40 @@ app.use('/api/financial-documents', (req, res, next) => {
 app.use('/api/contact', (req, res, next) => {
   console.log('Contact route hit:', req.path);
   next();
-}, contactRoutes);
+}, limiter, contactRoutes);
+
 app.use('/api/shares', (req, res, next) => {
   console.log('Shares route hit:', req.path);
   next();
 }, sharesRoutes);
+
 app.use('/api/shares-detail', (req, res, next) => {
   console.log('Shares detail route hit:', req.path);
   next();
 }, shareDetailRoutes);
-// Mount contact form routes with logging
+
 app.use('/api/contact-form', (req, res, next) => {
   console.log('Contact form route hit:', req.path);
   next();
 }, contactFormRoutes);
-// API status endpoint
+
+// API status endpoint with all routes
 app.get('/api/status', (req, res) => {
   const routes = {
     health: '/api/health',
     system: '/api/system',
     blogs: '/api/blog-posts',
     financials: '/api/financial-documents',
-    contact: '/api/contact'
+    contact: '/api/contact',
+    shares: '/api/shares',
+    sharesDetail: '/api/shares-detail',
+    contactForm: '/api/contact-form',
+    companies: '/api/companies',
+    analytics: {
+      track: '/api/analytics/track',
+      stats: '/api/analytics/stats',
+      unique: '/api/analytics/unique'
+    }
   };
   
   res.json({
@@ -181,22 +211,6 @@ app.get('/api/status', (req, res) => {
     }
   });
 });
-
-// Rate limiting middleware (optional)
-const rateLimit = require('express-rate-limit');
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Too many requests',
-    message: 'Please try again later',
-    timestamp: new Date().toISOString()
-  }
-});
-
-// Apply rate limiting to contact route
-app.use('/api/contact', limiter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -244,3 +258,14 @@ process.on('unhandledRejection', (reason, promise) => {
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
 });
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received. Closing HTTP server...');
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+});
+
+module.exports = app;
