@@ -180,11 +180,12 @@ const HomePage = () => (
       <ErrorBoundary>
         <SharesSection />
       </ErrorBoundary>
-      <ErrorBoundary>
-        <AboutSection />
-      </ErrorBoundary>
+
       <ErrorBoundary>
         <StepCard />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <AboutSection />
       </ErrorBoundary>
 
     </Suspense>
