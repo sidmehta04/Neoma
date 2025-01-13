@@ -51,7 +51,7 @@ const ContactPage = lazyLoad(import('./pages/ContactUs'), 'ContactPage');
 const CalculatorLayout = lazyLoad(import('./pages/Calculator'), 'CalculatorLayout');
 const BlogPage = lazyLoad(import('./pages/Blogs/Blogs'), 'BlogPage');
 const BlogPost = lazyLoad(import('./pages/Blogs/BlogPost'), 'BlogPost');
-
+const NewsPage = lazyLoad(import('./pages/News'), 'Newsletter');
 // Offering pages (same as before)
 const GetStarted = lazyLoad(import('./pages/Offerings/GetStarted'), 'GetStarted');
 const MutualFunds = lazyLoad(import('./pages/Offerings/MutualFunds'), 'MutualFunds');
@@ -382,6 +382,26 @@ const routes = [
     title: 'Financial Calculators | Neoma Capital',
     description: 'Use Neoma Capital\'s financial calculators to plan your investments, estimate returns, and make informed financial decisions for your future.',
     keywords: 'financial calculator, investment calculator, returns calculator, SIP calculator, wealth planning tools'
+  },
+  { 
+    path: '/news', 
+    element: <NewsPage />, 
+    title: 'Latest News & Updates | Neoma Capital',
+    description: 'Stay informed with the latest financial news, market updates, and investment insights curated by Neoma Capital\'s expert team.',
+    keywords: 'financial news, market updates, investment news, Indian markets, business news, Neoma Capital news',
+    schema: {
+      "@type": "NewsArticle",
+      "headline": "Latest Financial News and Market Updates",
+      "description": "Stay updated with the latest financial news, market trends, and investment insights.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Neoma Capital",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.neomacapital.com/logo.png"
+        }
+      }
+    }
   },
   { 
     path: '*', 

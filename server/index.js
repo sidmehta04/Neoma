@@ -26,7 +26,8 @@ app.use(cors({
       'https://neoma-tsta.vercel.app',
       'https://neoma-two.vercel.app',
       'https://www.neomacapital.com',
-      'https://api.neomacapital.com'
+      'https://api.neomacapital.com',
+      'https://ipapi.co/json/'
     ];
     
     if (!origin) return callback(null, true);
@@ -120,7 +121,8 @@ app.get('/api/health', (req, res) => {
         'https://neoma-tsta.vercel.app',
         'https://neoma-two.vercel.app',
         'https://www.neomacapital.com',
-        'https://api.neomacapital.com'
+        'https://api.neomacapital.com',
+        'https://ipapi.co/json/'
       ]
     }
   };

@@ -17,7 +17,8 @@ import {
   Boxes,
   Feather,
   DollarSignIcon,
-  SearchCheck
+  SearchCheck,
+  Newspaper
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import neomalogo from "../../assets/neomalogo2.svg";
@@ -94,6 +95,12 @@ const Navbar = () => {
       desc: "Common questions answered",
       icon: HelpCircle,
     },
+    {
+      name: "News",
+      path: "/news",
+      desc: "Best news sources for investors",
+      icon: Newspaper,
+    }
   ];
 
   useEffect(() => {

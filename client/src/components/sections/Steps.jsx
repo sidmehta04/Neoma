@@ -58,18 +58,18 @@ const UnlistedStocksSteps = () => {
     },
     {
       icon: Users,
-      title: "Lot Size Discussion",
-      description: "Our team will guide you through lot sizes and purchase process."
+      title: "Buying and Selling of Shares",
+      description: "We'll guide you through selecting the right number of shares and managing your buy and sell transactions."
     },
     {
       icon: CheckCircle,
-      title: "Stock Transfer",
-      description: "Stocks transferred to your account with all verifications."
+      title: "Confirmation",
+      description: "Receive your confirmation with transaction details."
     },
     {
       icon: FileText,
-      title: "Confirmation",
-      description: "Receive your confirmation with transaction details."
+      title: "Stock Transfer",
+      description: "The stocks will be transferred to your account following all the necessary procedures and verifications at earliest."
     }
   ];
 
