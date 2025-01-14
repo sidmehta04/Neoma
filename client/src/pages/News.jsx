@@ -93,44 +93,31 @@ const NewsPage = () => {
       console.error('Cache setting error:', error);
     }
   };
-
-  // Enhanced stock news fetching
-  const fetchStockNews = async (company) => {
+  const fetchNewsByCategory = async (category) => {
     try {
-      // Set fixed start date (August 2024) and get current date
-      const fromDate = '2024-08-01';
-      const today = new Date();
-      const toDate = today.toISOString().split('T')[0];  // Format: YYYY-MM-DD
-
-      // Create a more focused query for the company
-      // Create a focused query for stock-related news
-      const query = encodeURIComponent(`("${company.name}" OR "${company.symbol}") AND (stock OR shares OR NSE OR BSE OR trading OR "stock market")`);
-      
+      if (apiCalls >= API_LIMIT) {
+        throw new Error('API call limit reached for today');
+      }
+  
+      const query = encodeURIComponent(categories[category]);
       incrementApiCall();
+      
       const response = await fetch(
         `https://newsapi.org/v2/everything?` +
         `q=${query}&` +
-        `from=${fromDate}&` +
-        `to=${toDate}&` +
         `language=en&` +
         `sortBy=publishedAt&` +
-        `pageSize=15&` +
-        `apiKey=776d43fd7afc47c9843cb855711f30cb`
+        `pageSize=10&` +
+        `apiKey=01625baca6644d069697ad7b5dba5144`
       );
-      
+  
       if (!response.ok) {
         throw new Error(`News API error: ${response.statusText}`);
       }
-      
+  
       const result = await response.json();
-
-      // Filter and process the articles
-      const articles = (result.articles || []);
-
-      // Sort by date and take the most recent ones
-      const sortedArticles = uniqueArticles
-        .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
-        .slice(0, 3)
+      
+      return (result.articles || [])
         .map((article, index) => ({
           id: index,
           title: article.title,
@@ -140,13 +127,69 @@ const NewsPage = () => {
           imageUrl: article.urlToImage || '/api/placeholder/400/200',
           url: article.url
         }));
-
-      return sortedArticles;
     } catch (error) {
-      console.error(`Error fetching news for ${company.name}:`, error);
+      console.error(`Error fetching ${category} news:`, error);
       return [];
     }
   };
+  
+  // Add the missing incrementApiCall function
+  const incrementApiCall = () => {
+    const newCount = apiCalls + 1;
+    setApiCalls(newCount);
+    localStorage.setItem('apiCallsData', JSON.stringify({
+      count: newCount,
+      resetTime: lastResetTime.toISOString()
+    }));
+  };
+  
+
+  // Fix the fetchStockNews function
+const fetchStockNews = async (company) => {
+  try {
+    const fromDate = '2024-08-01';
+    const today = new Date();
+    const toDate = today.toISOString().split('T')[0];
+
+    const query = encodeURIComponent(`("${company.name}" OR "${company.symbol}") AND (stock OR shares OR NSE OR BSE OR trading OR "stock market")`);
+    
+    incrementApiCall();
+    const response = await fetch(
+      `https://newsapi.org/v2/everything?` +
+      `q=${query}&` +
+      `from=${fromDate}&` +
+      `to=${toDate}&` +
+      `language=en&` +
+      `sortBy=publishedAt&` +
+      `pageSize=15&` +
+      `apiKey=01625baca6644d069697ad7b5dba5144`
+    );
+    
+    if (!response.ok) {
+      throw new Error(`News API error: ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    const articles = result.articles || [];
+
+    // Sort and process articles (removed reference to undefined uniqueArticles)
+    return articles
+      .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
+      .slice(0, 3)
+      .map((article, index) => ({
+        id: index,
+        title: article.title,
+        description: article.description,
+        source: article.source.name,
+        date: article.publishedAt,
+        imageUrl: article.urlToImage || '/api/placeholder/400/200',
+        url: article.url
+      }));
+  } catch (error) {
+    console.error(`Error fetching news for ${company.name}:`, error);
+    return [];
+  }
+};
 
   const fetchCompanies = async () => {
     try {
