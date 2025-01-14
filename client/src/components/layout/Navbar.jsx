@@ -95,12 +95,7 @@ const Navbar = () => {
       desc: "Common questions answered",
       icon: HelpCircle,
     },
-    {
-      name: "News",
-      path: "/news",
-      desc: "Best news sources for investors",
-      icon: Newspaper,
-    }
+
   ];
 
   useEffect(() => {
