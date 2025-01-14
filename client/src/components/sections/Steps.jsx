@@ -26,7 +26,7 @@ const StepCard = ({ icon: Icon, title, description, step, isVisible, delay }) =>
             <h3 className="font-semibold text-base mb-1 text-white group-hover:text-blue-400 
                          transition-colors duration-300">{title}</h3>
             <p className="text-gray-400 text-sm transition-all duration-300 
-                       group-hover:text-gray-300 line-clamp-3">{description}</p>
+                       group-hover:text-gray-300 leading-relaxed">{description}</p>
           </div>
         </div>
       </CardContent>
@@ -64,12 +64,12 @@ const UnlistedStocksSteps = () => {
     {
       icon: CheckCircle,
       title: "Confirmation",
-      description: "Receive your confirmation with transaction details."
+      description: "Once the transaction is processed, you will receive a confirmation along with detailed information about the transaction, including the number of shares, purchase of selling and buying price, and other relevant details."
     },
     {
       icon: FileText,
       title: "Stock Transfer",
-      description: "The stocks will be transferred to your account following all the necessary procedures."
+      description: "The stocks will be transferred to your account following all the necessary procedures and verifications at earliest."
     }
   ];
 
