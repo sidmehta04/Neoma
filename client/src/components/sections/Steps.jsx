@@ -107,7 +107,7 @@ const UnlistedStocksSteps = () => {
                    hover:scale-105 hover:-rotate-1 text-blue-400 px-4
                    tracking-tight animate-fade-in">
         <span className="bg-gradient-to-r from-blue-400 to-white bg-clip-text text-transparent">
-          How to Buy From Us
+          How to Transact From Us
         </span>
       </h2>
       
