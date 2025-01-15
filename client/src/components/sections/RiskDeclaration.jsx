@@ -26,6 +26,8 @@ const RiskDeclaration = ({ theme }) => {
         <li>We do not provide personalized investment advice or recommendations</li>
         <li>You are responsible for conducting your own due diligence</li>
         <li>Market data may be delayed by 15-20 minutes unless specified</li>
+        <li>We are just a platform and we just facilitate transactions</li>
+
       </ul>
       
       
