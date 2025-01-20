@@ -114,8 +114,10 @@ const SharesSection = () => {
                       ${theme === "dark" ? "bg-rgb(11, 15, 23)" : "bg-gradient-to-b from-white-50 to-white"}`}
     >
       <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-bold text-center mb-8">
+ Buy or Sell Unlisted,Pre-IPO,Delisted Shares
+        </h1>
         <div className="mb-8 sm:mb-12"></div>
-
         <SearchBar
           className="mb-4 sm:mb-6"
           onSearch={handleSearch}
@@ -124,7 +126,6 @@ const SharesSection = () => {
           query={searchQuery}
           theme={theme}
         />
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredShares.slice(0, visibleShares).map((share) => (
             <div
@@ -144,7 +145,6 @@ const SharesSection = () => {
             </div>
           ))}
         </div>
-
         {filteredShares.length > 6 && !searchQuery && (
           <div className="mt-10 sm:mt-12 text-center">
             <button
@@ -164,7 +164,6 @@ const SharesSection = () => {
             </button>
           </div>
         )}
-
         {filteredShares.length === 0 && (
           <div
             className={`text-center mt-8 sm:mt-10 text-base sm:text-lg 
