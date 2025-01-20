@@ -114,9 +114,7 @@ const SharesSection = () => {
                       ${theme === "dark" ? "bg-rgb(11, 15, 23)" : "bg-gradient-to-b from-white-50 to-white"}`}
     >
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-8">
- Buy or Sell Unlisted,Pre-IPO,Delisted Shares
-        </h1>
+        
         <div className="mb-8 sm:mb-12"></div>
         <SearchBar
           className="mb-4 sm:mb-6"

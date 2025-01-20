@@ -228,6 +228,9 @@ const Layout = ({ children }) => (
 const HomePage = () => (
   <Layout>
     <Suspense fallback={<LoadingFallback />}>
+    <ErrorBoundary>
+        <HeroSection />
+      </ErrorBoundary>
       <ErrorBoundary>
         <SharesSection />
       </ErrorBoundary>
@@ -235,9 +238,7 @@ const HomePage = () => (
         <StepCard />
       </ErrorBoundary>
 
-      <ErrorBoundary>
-        <HeroSection />
-      </ErrorBoundary>
+  
 
       <ErrorBoundary>
         <AboutSection />
