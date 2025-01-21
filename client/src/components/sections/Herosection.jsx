@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import moonvideo from "../../assets/moon.mp4";
+import moonvideo from "../../assets/moon1.mp4";
 import ContactDialog from "./Inquiry";
 
 const HeroSection = () => {
@@ -52,7 +52,7 @@ const HeroSection = () => {
       <div className="absolute inset-0 w-full h-full">
         <div className="relative w-full h-full">
           <video
-            className={`absolute top-1/2 left-1/2 min-w-full min-h-full object-cover transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-1000 ${
+            className={`absolute top-[55%] left-1/2 min-w-full min-h-full object-cover transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-1000 ${
               isVideoLoaded ? "opacity-95" : "opacity-0"
             }`}
             autoPlay
