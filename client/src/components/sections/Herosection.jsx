@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import moonvideo from "../../assets/moon1.mp4";
-import ContactDialog from "./Inquiry";
+import ContactDialog  from  "./Inquiry";
 
 const HeroSection = () => {
   const { theme } = useTheme();
