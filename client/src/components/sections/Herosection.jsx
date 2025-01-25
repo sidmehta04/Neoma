@@ -90,14 +90,14 @@ const HeroSection = () => {
           </h1>
 
           {/* Description */}
-          <p className={`text-xs 
+          <p className={`text-s 
                      mb-2 sm:mb-3 text-left 
                      max-w-xl
                      leading-relaxed
                      opacity-0 animate-fade-in
                      ${theme === "dark" ? "text-gray-200" : "text-white font-medium"}`}
             style={{ animationDelay: "1s" }}>
-            Buy and sell unlisted , pre-ipo and delisted shares at prices with us.
+            Buy and Sell Unlisted , Pre-IPO and Delisted Shares with us.
           </p>
 
           {/* CTA Button */}

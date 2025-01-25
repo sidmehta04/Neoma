@@ -62,12 +62,7 @@ const Navbar = () => {
       desc: "Early-stage investment in promising startups",
       icon: Feather,
     },
-    {
-      name: "Portfolio Suggestions",
-      path: "/portfolio",
-      desc: "Personalized investment recommendations",
-      icon: Rocket,
-    },
+
     {
       name: "Alternative Investment",
       path: "/alternative",

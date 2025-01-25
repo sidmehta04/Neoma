@@ -5,10 +5,7 @@ import axios from "axios";
 import ShareCard from "../ui/ShareCard";
 import SearchBar from "../ui/Searchbar";
 
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_URL2 ||
-  "http://localhost:5001";
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL2 || "http://localhost:5001";
 
 const SharesSection = () => {
   const navigate = useNavigate();
@@ -19,13 +16,13 @@ const SharesSection = () => {
   const [visibleShares, setVisibleShares] = useState(6);
   const [filteredShares, setFilteredShares] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     const fetchShares = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/shares`, {
           withCredentials: true,
         });
-
         const processedShares = response.data.map((share) => ({
           id: share.id,
           name: share.name,
@@ -34,7 +31,6 @@ const SharesSection = () => {
           change: share.latestPrice.change_percentage?.toFixed(2) || "0.00",
           marketCap: share.latestPrice.marketcap || "N/A",
         }));
-
         setShares(processedShares);
         handleSearch(searchQuery, processedShares);
         setError(null);
@@ -45,7 +41,6 @@ const SharesSection = () => {
         setLoading(false);
       }
     };
-
     fetchShares();
   }, []);
 
@@ -114,8 +109,9 @@ const SharesSection = () => {
                       ${theme === "dark" ? "bg-rgb(11, 15, 23)" : "bg-gradient-to-b from-white-50 to-white"}`}
     >
       <div className="max-w-7xl mx-auto">
-        
-        <div className="mb-8 sm:mb-12"></div>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-center">
+          Navigate the World of Unlisted Shares
+        </h2>
         <SearchBar
           className="mb-4 sm:mb-6"
           onSearch={handleSearch}
