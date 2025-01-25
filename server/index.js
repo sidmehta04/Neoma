@@ -82,7 +82,12 @@ const contactFormRoutes = require('./routes/contact-form')(supabase);
 const shareDetailRoutes = require('./routes/shares-detail')(supabase);
 const companiesRoutes = require('./routes/companies')(supabase);
 const visitorTrackingRoutes = require('./routes/tracker')(supabase);
-
+// Add to index.js:
+const partnerRoutes = require('./routes/Partner')(supabase);
+app.use('/api/partner', (req, res, next) => {
+ console.log('Partner route hit:', req.path);
+ next();
+}, limiter, partnerRoutes);
 // Logging middleware
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);

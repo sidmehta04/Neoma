@@ -68,6 +68,8 @@ const StepCard = lazyLoad(import("./components/sections/Steps"), "StepCard");
 const FAQ = lazyLoad(import("./pages/FAQ"), "FAQ");
 const ShareDetail = lazyLoad(import("./pages/ShareDetail"), "ShareDetail");
 const ContactPage = lazyLoad(import("./pages/ContactUs"), "ContactPage");
+const PartnerWithUs = lazyLoad(import("./pages/Partner"), "PartnerWithUs");
+
 const CalculatorLayout = lazyLoad(
   import("./pages/Calculator"),
   "CalculatorLayout"
@@ -378,6 +380,24 @@ const routes = [
       "Explore our curated selection of mutual funds. Get expert guidance on fund selection, portfolio diversification, and systematic investment plans (SIP) for long-term wealth creation.",
     keywords:
       "mutual funds, SIP investment, fund management, portfolio diversification, mutual fund schemes",
+  },
+  {
+    path: "/partner",
+    element: <PartnerWithUs />,
+    title: "Partner With Us | Neoma Capital",
+    description: "Join forces with Neoma Capital to create mutual value and drive innovation in investment services. Explore partnership opportunities and collaboration models.",
+    keywords: "business partnership, investment partnership, channel partner, corporate alliance, strategic partnership, Neoma Capital partner",
+    schema: {
+      "@type": "Service",
+      name: "Partnership Program",
+      provider: {
+        "@type": "Organization",
+        name: "Neoma Capital"
+      },
+      description: "Partnership and collaboration opportunities with Neoma Capital",
+      serviceType: "Business Partnership",
+      url: "https://www.neomacapital.com/partner"
+    }
   },
   {
     path: "/alternative",
