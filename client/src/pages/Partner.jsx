@@ -1,6 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ClipboardCheck, FileCheck, UserPlus } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+
+import PartnerImage from '../assets/Partner.svg';
+const TypeWriter = ({ text, delay = 100 }) => {
+  const [currentText, setCurrentText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setCurrentText(prev => prev + text[currentIndex]);
+        setCurrentIndex(currentIndex + 1);
+      }, delay);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, delay, text]);
+
+  return <span>{currentText}</span>;
+};
+
+const GlitterText = ({ children }) => (
+  <span className="inline-block animate-shimmer bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600 bg-clip-text text-transparent bg-300">
+    {children}
+  </span>
+);
 
 const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
 
@@ -68,22 +92,14 @@ const PartnerWithUs = () => {
         },
         body: JSON.stringify(formData)
       });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
+      if (!response.ok) throw new Error('Network response was not ok');
+      
       setAlert({
         show: true,
         message: "Thank you for your interest! We'll contact you soon.",
         type: "success"
       });
-      setFormData({
-        name: '',
-        phone_number: '',
-        email: '',
-        message: ''
-      });
+      setFormData({ name: '', phone_number: '', email: '', message: '' });
     } catch (error) {
       console.error('Partner form submission error:', error);
       setAlert({
@@ -99,66 +115,66 @@ const PartnerWithUs = () => {
 
   const inputClasses = `mt-1 block w-full rounded-lg transition-all duration-200
     border focus:ring-2 focus:ring-offset-0 focus:outline-none py-2.5 px-4
-    ${isDark 
-      ? "bg-gray-700 border-gray-600 text-white" 
-      : "bg-white border-gray-300 text-gray-900"}`;
+    ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`;
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="min-h-screen bg-[rgb(11,15,23)]">
       {/* Hero Section */}
       <div className="relative overflow-hidden py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className={`text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6
-              ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Partner With Us for Growth
-            </h1>
-            <p className={`text-base sm:text-lg leading-8 mx-auto max-w-2xl mb-6 sm:mb-10
-              ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              Earn lucrative commission without an initial investment.
-            </p>
-            <button
-              onClick={() => {
-                document.getElementById('contact-form').scrollIntoView({ 
-                  behavior: 'smooth',
-                  block: 'start'
-                });
-              }}
-              className={`rounded-lg px-4 sm:px-6 py-2.5 sm:py-3 text-base sm:text-lg font-semibold shadow-sm
-                transition-all duration-200 w-full sm:w-auto
-                ${isDark 
-                  ? 'bg-blue-600 text-white hover:bg-blue-500' 
-                  : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
-              Become a Partner
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Left Content */}
+            <div className="text-left">
+              <h1 className="text-3xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-4 sm:mb-6 text-white">
+                <TypeWriter text="Partner With Us for Growth" />
+              </h1>
+              <p className="text-base sm:text-lg leading-8 max-w-2xl mb-6 sm:mb-10 text-gray-300">
+                <GlitterText>
+                  Earn lucrative commission without an initial investment.
+                </GlitterText>
+              </p>
+              <button
+                onClick={() => {
+                  document.getElementById('contact-form').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                }}
+                className="rounded-lg px-6 py-3 text-lg font-semibold shadow-sm
+                  transition-all duration-200 hover:scale-105 bg-blue-600 text-white hover:bg-blue-500">
+                Become a Partner
+              </button>
+            </div>
+            
+            {/* Right SVG */}
+            <div className="relative w-full h-96">
+              <img 
+                src={PartnerImage}
+                alt="Partnership Illustration"
+                className="w-full h-full object-contain scale-90 sm:scale-100"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Steps Section */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        <h2 className={`text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-center
-          ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          Steps for becoming our partner
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-center text-white">
+          <TypeWriter text="Steps for becoming our partner" delay={50} />
         </h2>
         <div className="grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {steps.map((step, index) => (
             <div key={index} 
-              className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl transition-all duration-200
-                ${isDark 
-                  ? 'bg-gray-800/50 hover:bg-gray-800' 
-                  : 'bg-gray-50 hover:bg-gray-100'}`}>
-              <div className={`p-2 sm:p-3 rounded-lg w-fit mb-4
-                ${isDark ? 'bg-gray-700' : 'bg-white'}`}>
-                <step.icon className={`w-5 h-5 sm:w-6 sm:h-6 
-                  ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+              className="p-6 rounded-xl transition-all duration-200 hover:scale-105
+                bg-gray-800/50 hover:bg-gray-800">
+              <div className="p-3 rounded-lg w-fit mb-4 bg-gray-700">
+                <step.icon className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className={`text-lg sm:text-xl font-semibold mb-2 
-                ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Step {index + 1} - {step.title}
+              <h3 className="text-xl font-semibold mb-2 text-white">
+                <TypeWriter text={`Step ${index + 1} - ${step.title}`} delay={30} />
               </h3>
-              <p className={`text-sm sm:text-base leading-relaxed 
-                ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              <p className="text-base leading-relaxed text-gray-300">
                 {step.description}
               </p>
             </div>
@@ -166,32 +182,27 @@ const PartnerWithUs = () => {
         </div>
       </div>
 
-      {/* Contact Form Section */}
-      <div id="contact-form" className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        <div className={`p-4 sm:p-8 rounded-xl sm:rounded-2xl 
-          ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
-          <h2 className={`text-2xl sm:text-3xl font-bold mb-6 text-center
-            ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Get in Touch
+      {/* Contact Form */}
+      <div id="contact-form" className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl bg-gray-800">
+          <h2 className="text-3xl font-bold mb-6 text-center text-white">
+            <TypeWriter text="Get in Touch" delay={50} />
           </h2>
+          
           {alert.show && (
             <Alert className={`mb-6 ${
               alert.type === "error"
-                ? isDark 
-                  ? "bg-red-900/30 border-red-700/50 text-red-200" 
-                  : "bg-red-50 border-red-200 text-red-800"
-                : isDark
-                  ? "bg-green-900/30 border-green-700/50 text-green-200" 
-                  : "bg-green-50 border-green-200 text-green-800"
+                ? "bg-red-900/30 border-red-700/50 text-red-200"
+                : "bg-green-900/30 border-green-700/50 text-green-200"
             }`}>
               <AlertDescription>{alert.message}</AlertDescription>
             </Alert>
           )}
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <label className={`block text-sm font-medium mb-1.5 sm:mb-2
-                  ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label className="block text-sm font-medium mb-2 text-gray-300">
                   Full Name
                 </label>
                 <input 
@@ -205,8 +216,7 @@ const PartnerWithUs = () => {
                 />
               </div>
               <div>
-                <label className={`block text-sm font-medium mb-1.5 sm:mb-2
-                  ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label className="block text-sm font-medium mb-2 text-gray-300">
                   Phone Number
                 </label>
                 <input 
@@ -220,9 +230,9 @@ const PartnerWithUs = () => {
                 />
               </div>
             </div>
+            
             <div>
-              <label className={`block text-sm font-medium mb-1.5 sm:mb-2
-                ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
                 Email
               </label>
               <input 
@@ -235,9 +245,9 @@ const PartnerWithUs = () => {
                 required
               />
             </div>
+
             <div>
-              <label className={`block text-sm font-medium mb-1.5 sm:mb-2
-                ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
                 Message
               </label>
               <textarea 
@@ -250,15 +260,13 @@ const PartnerWithUs = () => {
                 required
               />
             </div>
+
             <button 
               type="submit"
               disabled={loading}
-              className={`w-full px-4 sm:px-6 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg
-                transition-all duration-200
-                ${loading ? 'opacity-50 cursor-not-allowed' : ''}
-                ${isDark
-                  ? 'bg-blue-600 text-white hover:bg-blue-500'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
+              className="w-full px-6 py-3 text-lg font-semibold rounded-lg
+                transition-all duration-200 hover:scale-105 bg-blue-600 text-white 
+                hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
               {loading ? 'Submitting...' : 'Submit'}
             </button>
           </form>
@@ -267,5 +275,26 @@ const PartnerWithUs = () => {
     </div>
   );
 };
+
+// Animation styles
+const styles = `
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+  
+  .bg-300 {
+    background-size: 300% 100%;
+  }
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
 export default PartnerWithUs;
