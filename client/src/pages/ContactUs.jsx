@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MapPin, Phone, Mail, MapPinned } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+const API_URL = import.meta.env.VITE_API_URL||import.meta.env.VITE_API_URL2 || 'http://localhost:5001';
 
 const Alert = ({ children, className }) => (
   <div className={`p-4 rounded-lg border transition-all duration-200 ${className}`}>
@@ -15,9 +15,23 @@ const AlertDescription = ({ children }) => (
   <div className="text-sm font-medium">{children}</div>
 );
 
+// Fallback Map Component
+const StaticMap = ({ isDark }) => (
+  <div className={`w-full h-64 sm:h-72 rounded-lg border flex items-center justify-center
+    ${isDark ? "bg-gray-800 border-gray-700" : "bg-blue-50 border-blue-100"}`}>
+    <div className="text-center">
+      <MapPinned className={`w-10 h-10 mx-auto mb-2 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
+      <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+        2/16 FF RS Nehru Enclave<br />New Delhi -110019
+      </p>
+    </div>
+  </div>
+);
+
 const ContactForm = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [mapError, setMapError] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -46,9 +60,19 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
-      await axios.post(
+      // Add timestamp and format data
+      const submissionData = {
+        ...formData,
+        timestamp: new Date().toISOString(),
+        created_at: new Date().toISOString() // Add this if your DB requires it
+      };
+
+      // Debug log
+      console.log('Submitting form data:', submissionData);
+
+      const response = await axios.post(
         `${API_URL}/api/contact-form/submit`,
-        formData,
+        submissionData,
         {
           withCredentials: true,
           headers: {
@@ -57,24 +81,36 @@ const ContactForm = () => {
         }
       );
 
-      setAlert({
-        show: true,
-        message: "Thank you for your message. We will get back to you soon!",
-        type: "success",
-      });
+      // Debug log
+      console.log('Server response:', response);
 
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-      });
+      if (response.status === 200) {
+        setAlert({
+          show: true,
+          message: "Thank you for your message. We will get back to you soon!",
+          type: "success",
+        });
+
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        throw new Error('Unexpected response status');
+      }
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('Form submission error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
       setAlert({
         show: true,
-        message: error.response?.data?.error || "Something went wrong. Please try again.",
+        message: error.response?.data?.error || "Unable to submit form. Please try again or contact us directly.",
         type: "error",
       });
     } finally {
@@ -84,6 +120,10 @@ const ContactForm = () => {
         5000
       );
     }
+  };
+
+  const handleMapError = () => {
+    setMapError(true);
   };
 
   const inputClasses = `
@@ -124,6 +164,7 @@ const ContactForm = () => {
           {/* Contact Information */}
           <div className="order-2 lg:order-1">
             <div className="space-y-8">
+              {/* Address */}
               <div className="flex items-start space-x-4">
                 <div className={`p-2 rounded-lg ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
                   <MapPin className="w-6 h-6 text-blue-600" />
@@ -140,6 +181,7 @@ const ContactForm = () => {
                 </div>
               </div>
 
+              {/* Phone */}
               <div className="flex items-start space-x-4">
                 <div className={`p-2 rounded-lg ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
                   <Phone className="w-6 h-6 text-blue-600" />
@@ -156,6 +198,7 @@ const ContactForm = () => {
                 </div>
               </div>
 
+              {/* Email */}
               <div className="flex items-start space-x-4">
                 <div className={`p-2 rounded-lg ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
                   <Mail className="w-6 h-6 text-blue-600" />
@@ -177,21 +220,20 @@ const ContactForm = () => {
             </div>
 
             <div className="mt-12 relative">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3505.095656387876!2d77.25732719999999!3d28.545557499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s!2s!5e0!3m2!1sen!2sin!4v1673000000000!5m2!1sen!2sin"
-                className={`w-full h-64 sm:h-72 rounded-lg border transition-colors duration-200
-                  ${isDark ? "border-gray-700" : "border-blue-100"}`}
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <MapPinned 
-                  className={`w-10 h-10 animate-bounce 
-                    ${isDark ? "text-red-500" : "text-red-600"}`} 
+              {mapError ? (
+                <StaticMap isDark={isDark} />
+              ) : (
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3505.095656387876!2d77.25732719999999!3d28.545557499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s!2s!5e0!3m2!1sen!2sin!4v1673000000000!5m2!1sen!2sin"
+                  className={`w-full h-64 sm:h-72 rounded-lg border transition-colors duration-200
+                    ${isDark ? "border-gray-700" : "border-blue-100"}`}
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  onError={handleMapError}
                 />
-              </div>
+              )}
             </div>
           </div>
 

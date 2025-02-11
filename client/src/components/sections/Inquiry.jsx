@@ -82,7 +82,7 @@ const ContactDialog = ({ isOpen, onClose }) => {
       setTimeout(() => {
         window.location.href = response.data.whatsappUrl;
         onClose();
-      }, 1500);
+      }, 1000);
       
     } catch (error) {
       console.error("Error:", error);
